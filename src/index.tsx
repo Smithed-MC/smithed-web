@@ -4,7 +4,10 @@ import './index.css';
 import App from './App';
 import styled from 'styled-components';
 import reportWebVitals from './reportWebVitals';
-
+import {BrowserRouter} from 'react-router-dom'
+import {Route} from 'react-router'
+import Discord from './subpages/Discord';
+import Images from './subpages/Images';
 export const palette = {
   darkAccent: '#1B48C4',
   lightAccent: '#216BEA',
@@ -33,18 +36,18 @@ const IndexContainer = styled.div`
   }
 
   h1 {
-    font-size: 4rem;
+    font-size: 3rem;
     margin: 0px;
     font-family: Disket-Bold;
   }
   h2 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     margin: 0px;
     font-family: Disket-Bold;
     color: ${palette.subText};
   }
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     margin: 0px;
     font-family: Disket-Bold;
     color: ${palette.subText};
@@ -69,7 +72,11 @@ const IndexContainer = styled.div`
 ReactDOM.render(
   <React.StrictMode>
     <IndexContainer>
-      <App />
+      <BrowserRouter>
+        <Route path='/discord' component={Discord}/>
+        <Route path='/images' component={Images}/>
+        <Route exact path='/' component={App}/>
+      </BrowserRouter>
     </IndexContainer>
   </React.StrictMode>,
   document.getElementById('root')

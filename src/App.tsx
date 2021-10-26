@@ -1,17 +1,29 @@
 import React from 'react';
 import { palette } from '.';
 import styled from 'styled-components'
+import { discordUrl } from './subpages/Discord';
 
 const AppContainer = styled.div`
   height: 100%;
   width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `
 
 const DownloadButton = styled.button`
-  width: 196px;
-  font-size: 2rem;
+  width: 128px;
+  font-size: 1.25rem;
   height: 48px;
   border-radius: 4px;
+`
+
+const CategoryDiv = styled.div`
+  display: flex; 
+  flex-direction: column;
+  align-items: center; 
+  width: 100%;
 `
 
 const detectUserEnviroment: () => 'windows'|'macos'|'ubuntu'|'unknown' = () => {
@@ -59,23 +71,34 @@ const downloadNightly = () => {
     window.open(`https://nightly.link/TheNuclearNexus/smithed/workflows/build-prod/master`)
 }
 
-function App() {
+function AppHeader() {
+  return (
+    <div style={{textAlign: 'center', backgroundColor: palette.darkAccent}}>
+      <h1>{'<SMITHED/>'}</h1>
+      <h3>{'{Datapack Launcher}'}</h3>
+      <div style={{backgroundColor: palette.lightAccent, height: 6}}/>
+    </div>
+  )
+}
+
+function App() {  
   return (
     <AppContainer>
-      <div style={{textAlign: 'center', backgroundColor: palette.darkAccent}}>
-        <h1>{'<SMITHED/>'}</h1>
-        <h2>{'{Datapack Launcher}'}</h2>
-        <div style={{backgroundColor: palette.lightAccent, height: 6}}/>
-      </div>
-      <br/>
-      <div style={{display: 'flex', flexDirection:'column', alignItems:'center', width: '100%'}}>
-        <h2 style={{color: palette.text}}>Download</h2>
+      <AppHeader/>
+      <CategoryDiv>
+        <h3 style={{color: palette.text}}>Discord</h3>
+        <div style={{display:'flex',gap: 8}}>
+          <DownloadButton onClick={()=>window.open(discordUrl)} style={{backgroundColor:'#5662F6'}}>Join</DownloadButton>
+        </div>
+      </CategoryDiv>
+      <CategoryDiv>
+        <h3 style={{color: palette.text}}>Download</h3>
         <div style={{display:'flex',gap: 8}}>
           <DownloadButton onClick={downloadStable}>Stable</DownloadButton>
           <DownloadButton onClick={downloadNightly} style={{backgroundColor:'#C274FF'}}>Nightly</DownloadButton>
         </div>
 
-      </div>
+      </CategoryDiv>
     </AppContainer>
   );
 }
