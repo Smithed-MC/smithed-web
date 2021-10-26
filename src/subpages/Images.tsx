@@ -7,7 +7,7 @@ function ImageRef(props: any) {
       window.location.href=image
   })
 
-  return (<img src={image}/>)
+  return (<span/>)
 }
 
 function Images() {
