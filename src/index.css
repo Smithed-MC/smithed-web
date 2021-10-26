@@ -5,9 +5,26 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+@font-face {
+  font-family: 'Disket';
+  src: local('Disket'),
+       url('./fonts/Disket-Mono-Regular.ttf') format('truetype')
+}
+@font-face {
+  font-family: 'Disket-Bold';
+  src: local('Disket-Bold'),
+       url('./fonts/Disket-Mono-Bold.ttf') format('truetype')
+}
+@font-face {
+  font-family: 'Inconsolata';
+  src: local('Inconsolata'),
+       url('./fonts/Inconsolata.otf') format('opentype')
 }
