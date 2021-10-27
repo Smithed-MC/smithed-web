@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { palette } from './Palette';
 import App from './App';
 import styled from 'styled-components';
 import reportWebVitals from './reportWebVitals';
@@ -8,15 +9,7 @@ import {BrowserRouter} from 'react-router-dom'
 import {Route} from 'react-router'
 import Discord from './subpages/Discord';
 import Images from './subpages/Images';
-export const palette = {
-  darkAccent: '#1B48C4',
-  lightAccent: '#216BEA',
-  darkBackground: '#24232B',
-  lightBackground: '#2F2F38',
-  text: '#FFFFFF',
-  subText: '#A0A0A0',
-  titlebar: '#FFFFFF'
-}
+
 
 const IndexContainer = styled.div`
   width: 100%;

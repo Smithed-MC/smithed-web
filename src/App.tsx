@@ -1,16 +1,9 @@
 import React from 'react';
-import { palette } from '.';
+import { palette } from './Palette'; 
 import styled from 'styled-components'
 import { discordUrl } from './subpages/Discord';
-
-const AppContainer = styled.div`
-  height: 100%;
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`
+import "animate.css/animate.min.css";
+import ScrollAnimation from 'react-animate-on-scroll';
 
 const DownloadButton = styled.button`
   width: 128px;
@@ -71,34 +64,66 @@ const downloadNightly = () => {
     window.open(`https://nightly.link/TheNuclearNexus/smithed/workflows/build-prod/master`)
 }
 
+const HeaderContainer = styled.div`
+  text-align: center;
+  background-color: ${palette.darkAccent};
+`
+
+
 function AppHeader() {
   return (
-    <div style={{textAlign: 'center', backgroundColor: palette.darkAccent}}>
-      <h1>{'<SMITHED/>'}</h1>
-      <h3>{'{Datapack Launcher}'}</h3>
-      <div style={{backgroundColor: palette.lightAccent, height: 6}}/>
-    </div>
+    <ScrollAnimation animateIn='animate__slideInDown' animateOnce={true} offset={0} duration={1}>
+      <HeaderContainer id="smithedHeader">
+        <h1>{'<SMITHED/>'}</h1>
+        <h3 id="smithedHeaderSubtitle">{'{Datapack Launcher}'}</h3>
+        <div style={{backgroundColor: palette.lightAccent, height: 6}}/>
+      </HeaderContainer>
+    </ScrollAnimation>
   )
 }
+
+const BodyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`
+
+function AppBody() {
+  return (
+    <ScrollAnimation animateIn='animate__fadeInUp' delay={1250} animateOnce={true}>
+      <BodyContainer>
+        <CategoryDiv>
+          <h3 style={{color: palette.text}}>Links</h3>
+          <div style={{display:'flex',gap: 8}}>
+            <DownloadButton onClick={()=>window.open('https://wiki.smithed.dev/')}>Wiki</DownloadButton>
+            <DownloadButton onClick={()=>window.open(discordUrl)} style={{backgroundColor:'#5662F6'}}>Discord</DownloadButton>
+          </div>
+        </CategoryDiv>
+        <CategoryDiv>
+          <h3 style={{color: palette.text}}>Download</h3>
+          <div style={{display:'flex',gap: 8}}>
+            <DownloadButton onClick={downloadStable}>Stable</DownloadButton>
+            <DownloadButton onClick={downloadNightly} style={{backgroundColor:'#C274FF'}}>Nightly</DownloadButton>
+          </div>
+
+        </CategoryDiv>
+      </BodyContainer>
+    </ScrollAnimation>
+  )
+}
+
+const AppContainer = styled.div`
+  width: 100%;
+  min-height: 100%;
+  overflow-y: auto;
+`
 
 function App() {  
   return (
     <AppContainer>
       <AppHeader/>
-      <CategoryDiv>
-        <h3 style={{color: palette.text}}>Discord</h3>
-        <div style={{display:'flex',gap: 8}}>
-          <DownloadButton onClick={()=>window.open(discordUrl)} style={{backgroundColor:'#5662F6'}}>Join</DownloadButton>
-        </div>
-      </CategoryDiv>
-      <CategoryDiv>
-        <h3 style={{color: palette.text}}>Download</h3>
-        <div style={{display:'flex',gap: 8}}>
-          <DownloadButton onClick={downloadStable}>Stable</DownloadButton>
-          <DownloadButton onClick={downloadNightly} style={{backgroundColor:'#C274FF'}}>Nightly</DownloadButton>
-        </div>
-
-      </CategoryDiv>
+      <br/>
+      <AppBody/>
     </AppContainer>
   );
 }
