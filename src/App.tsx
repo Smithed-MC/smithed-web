@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { discordUrl } from './subpages/Discord';
 import "animate.css/animate.min.css";
 import ScrollAnimation from 'react-animate-on-scroll';
+import PackGallery, { GalleryImage } from './components/Gallery';
 
 const DownloadButton = styled.button`
   width: 128px;
@@ -27,8 +28,7 @@ const detectUserEnviroment: () => 'windows'|'macos'|'ubuntu'|'unknown' = () => {
     return 'macos';
   else if(agent.indexOf('Linux') !== -1)
     return 'ubuntu';
-  return 'unknown';
-  
+  return 'unknown'; 
 }
 
 const downloadStable = () => {
@@ -88,10 +88,31 @@ const BodyContainer = styled.div`
   gap: 16px;
 `
 
+const galleryImages: GalleryImage[] = [
+  {
+    url:'https://github.com/Geegaz-Datapacks/GGDK-Data/blob/main/img/title_image.jpg?raw=true',
+    pack:'geegaz/ggdk'
+  },
+  {
+    url:'https://static.planetminecraft.com/files/resource_media/screenshot/14336380-thumbnail.jpg',
+    pack:'creepermagnet/tcc'
+  }
+]
+
 function AppBody() {
   return (
-    <ScrollAnimation animateIn='animate__fadeInUp' delay={1250} animateOnce={true}>
-      <BodyContainer>
+    <BodyContainer>
+      <ScrollAnimation animateIn='animate__fadeInUp' delay={1250} animateOnce={true}>
+        <CategoryDiv> 
+          <p style={{maxWidth:'30%', fontSize: 16}}>
+            Smithed is the all-in-one datapack launcher! 
+            <br/>
+            Focusing on both the end-user and developer experience to make datapack distribution, compatibility, and useage easier then ever! Explore interesting combinations of your favorite content!
+          </p>
+          <PackGallery width={480} height={270} scrollSpeed={5000} images={galleryImages}/>          
+        </CategoryDiv>
+      </ScrollAnimation>
+      <ScrollAnimation animateIn='animate__fadeInUp' delay={1500} animateOnce={true}>
         <CategoryDiv>
           <h3 style={{color: palette.text}}>Links</h3>
           <div style={{display:'flex',gap: 8}}>
@@ -99,6 +120,7 @@ function AppBody() {
             <DownloadButton onClick={()=>window.open(discordUrl)} style={{backgroundColor:'#5662F6'}}>Discord</DownloadButton>
           </div>
         </CategoryDiv>
+        <br/>
         <CategoryDiv>
           <h3 style={{color: palette.text}}>Download</h3>
           <div style={{display:'flex',gap: 8}}>
@@ -107,8 +129,8 @@ function AppBody() {
           </div>
 
         </CategoryDiv>
-      </BodyContainer>
-    </ScrollAnimation>
+      </ScrollAnimation>
+    </BodyContainer>
   )
 }
 
