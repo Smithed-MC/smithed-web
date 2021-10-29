@@ -104,12 +104,12 @@ function AppBody() {
     <BodyContainer>
       <ScrollAnimation animateIn='animate__fadeInUp' delay={1250} animateOnce={true}>
         <CategoryDiv> 
-          <p style={{maxWidth:'30%', fontSize: 16}}>
+          <p className="p-2 sm:w-320 sm:p-0 md:w-480 lg:w-640" style={{fontSize: 16}}>
             Smithed is the all-in-one datapack launcher! 
             <br/>
             Focusing on both the end-user and developer experience to make datapack distribution, compatibility, and useage easier then ever! Explore interesting combinations of your favorite content!
           </p>
-          <PackGallery width={480} height={270} scrollSpeed={5000} images={galleryImages}/>          
+          <PackGallery scrollSpeed={5000} images={galleryImages}/>          
         </CategoryDiv>
       </ScrollAnimation>
       <ScrollAnimation animateIn='animate__fadeInUp' delay={1500} animateOnce={true}>

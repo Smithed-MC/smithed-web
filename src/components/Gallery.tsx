@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import "animate.css/animate.min.css";
 import customProtocolCheck from 'protocol-checker';
 import styled from 'styled-components';
+import '../index.css'
 export interface GalleryImage {
     url: string,
     pack: string
@@ -11,8 +12,6 @@ interface GalleryProps {
     images: GalleryImage[],
     scrollSpeed: number,
     style?: React.CSSProperties
-    width: number|string,
-    height: number|string
 }
 
 
@@ -25,6 +24,8 @@ const PackImg = styled.img`
         filter: brightness(60%);
     }
 `
+
+const animationClass = "animate__animated animate__fadeIn "
 
 function PackGallery(props: GalleryProps) {
     const [imgIndex, setImgIndex] = useState(0)
@@ -47,7 +48,7 @@ function PackGallery(props: GalleryProps) {
         if(cur != null) {
             const imgRef = cur as HTMLImageElement
 
-            imgRef.className = "animate__animated animate__fadeIn"
+            imgRef.className = animationClass + imgRef.className
         }
     }
 
@@ -67,6 +68,7 @@ function PackGallery(props: GalleryProps) {
                     let og = (displayImg.current as HTMLImageElement)
                     og.style.opacity = '0'
                     ref.src = og.src
+                    ref.hidden = false
                 }
             }
             setImgIndex((imgIndex + 1) % props.images.length);
@@ -79,16 +81,19 @@ function PackGallery(props: GalleryProps) {
     
     const img = props.images[imgIndex]
 
-    let style = props.style
-    if(style == null) style = {width: props.width, height:props.height}
+    const imgClass = "w-320 h-180 md:w-480 md:h-270 lg:w-640 lg:h-360"
 
     return (
-        <div style={style}>
-            <img style={{position:'absolute',zIndex:0}} alt='' ref={backupImg} width={props.width} height={props.height}/>
-            <PackImg style={{position:'absolute',zIndex:1,animationDelay:'0.2s'}} onClick={()=>openPackView(img)} onMouseOver={()=>setMouseOver(true)} onMouseLeave={()=>setMouseOver(false)} ref={displayImg} alt='Pack' src={img.url} width={props.width} height={props.height} onAnimationEnd={(e) => {
+        <div className={imgClass} style={props.style}>
+            <img className={imgClass} style={{position:'absolute',zIndex:0}} alt='' ref={backupImg}/>
+            <PackImg className={imgClass} style={{position:'absolute',zIndex:1,animationDelay:'0.2s'}} onClick={()=>openPackView(img)} onMouseOver={()=>setMouseOver(true)} onMouseLeave={()=>setMouseOver(false)} ref={displayImg} alt='Pack' src={img.url} onAnimationEnd={(e) => {
                 let img = e.target as HTMLImageElement
-                img.className = ""    
+                img.className = imgClass
                 img.style.opacity = '100'
+
+                if(backupImg.current != null) {
+                    (backupImg.current as HTMLImageElement).hidden = true
+                }
             }}/>
         </div>
     )
