@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "animate.css/animate.min.css";
-import customProtocolCheck from 'protocol-checker';
 import styled from 'styled-components';
 import '../index.css'
+import { useHistory } from 'react-router';
 export interface GalleryImage {
     url: string,
     pack: string
@@ -29,17 +29,13 @@ const animationClass = "animate__animated animate__fadeIn "
 
 function PackGallery(props: GalleryProps) {
     const [imgIndex, setImgIndex] = useState(0)
+    const history = useHistory()
     const displayImg = useRef(null)
     const backupImg = useRef(null)
 
 
     const openPackView = (img: GalleryImage) => {
-        customProtocolCheck(
-            `smithed://packs/${img.pack}`,
-            () => {
-                alert('You haven\'t installed Smithed!')
-            }
-        )
+        history.push('/packs/' + img.pack)
     }
 
     const applyFade = () => {

@@ -95,6 +95,10 @@ const galleryImages: GalleryImage[] = [
   {
     url:'https://static.planetminecraft.com/files/resource_media/screenshot/14336380-thumbnail.jpg',
     pack:'creepermagnet/tcc'
+  },
+  {
+    url:'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/863/14897790-ocean-additions-thumbnaillogo_l.webp',
+    pack:'primalugly/ocean_additions'
   }
 ]
 
