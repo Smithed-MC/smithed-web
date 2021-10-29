@@ -9,6 +9,7 @@ import {BrowserRouter} from 'react-router-dom'
 import {Route} from 'react-router'
 import Discord from './subpages/Discord';
 import Images from './subpages/Images';
+import Packs from './subpages/Packs';
 
 
 const IndexContainer = styled.div`
@@ -68,6 +69,7 @@ ReactDOM.render(
       <BrowserRouter>
         <Route path='/discord' component={Discord}/>
         <Route path='/images' component={Images}/>
+        <Route path='/packs/:owner/:id' component={Packs}/>
         <Route exact path='/' component={App}/>
       </BrowserRouter>
     </IndexContainer>

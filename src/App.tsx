@@ -67,18 +67,17 @@ const downloadNightly = () => {
 const HeaderContainer = styled.div`
   text-align: center;
   background-color: ${palette.darkAccent};
+  width: 100%;
 `
 
 
-function AppHeader() {
+export function AppHeader(props: any) {
   return (
-    <ScrollAnimation animateIn='animate__slideInDown' animateOnce={true} offset={0} duration={1}>
-      <HeaderContainer id="smithedHeader">
-        <h1>{'<SMITHED/>'}</h1>
-        <h3 id="smithedHeaderSubtitle">{'{Datapack Launcher}'}</h3>
-        <div style={{backgroundColor: palette.lightAccent, height: 6}}/>
-      </HeaderContainer>
-    </ScrollAnimation>
+    <HeaderContainer id="smithedHeader">
+      <h1>{'<SMITHED/>'}</h1>
+      <h3 style={{marginTop: -16}} hidden={props.hideSubtitle}>{'{Datapack Launcher}'}</h3>
+      <div style={{backgroundColor: palette.lightAccent, height: 6}}/>
+    </HeaderContainer>
   )
 }
 
@@ -107,7 +106,7 @@ function AppBody() {
           <p className="p-2 sm:w-320 sm:p-0 md:w-480 lg:w-640" style={{fontSize: 16}}>
             Smithed is the all-in-one datapack launcher! 
             <br/>
-            Focusing on both the end-user and developer experience to make datapack distribution, compatibility, and useage easier then ever! Explore interesting combinations of your favorite content!
+            Focusing on both the end-user and developer experience to make datapack distribution, compatibility, and usage easier then ever! Explore interesting combinations of your favorite content!
           </p>
           <PackGallery scrollSpeed={5000} images={galleryImages}/>          
         </CategoryDiv>
@@ -143,7 +142,9 @@ const AppContainer = styled.div`
 function App() {  
   return (
     <AppContainer>
-      <AppHeader/>
+      <ScrollAnimation animateIn='animate__slideInDown' animateOnce={true} offset={0} duration={1}>
+        <AppHeader/>
+      </ScrollAnimation>
       <br/>
       <AppBody/>
     </AppContainer>

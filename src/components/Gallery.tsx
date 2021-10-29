@@ -29,7 +29,6 @@ const animationClass = "animate__animated animate__fadeIn "
 
 function PackGallery(props: GalleryProps) {
     const [imgIndex, setImgIndex] = useState(0)
-    const [mouseOver, setMouseOver] = useState(false)
     const displayImg = useRef(null)
     const backupImg = useRef(null)
 
@@ -53,12 +52,7 @@ function PackGallery(props: GalleryProps) {
     }
 
     const init = () => {
-        console.log(props.images)
         setTimeout(() => {
-            if(mouseOver) {
-                init();
-                return;
-            }
 
             const cur = backupImg.current;
             if(cur != null) {
@@ -77,7 +71,7 @@ function PackGallery(props: GalleryProps) {
 
     useEffect(()=>{applyFade();})
     
-    useEffect(init, [imgIndex, props, setImgIndex, backupImg, mouseOver, init])
+    useEffect(init, [imgIndex, props, setImgIndex, backupImg, init])
     
     const img = props.images[imgIndex]
 
@@ -85,8 +79,8 @@ function PackGallery(props: GalleryProps) {
 
     return (
         <div className={imgClass} style={props.style}>
-            <img className={imgClass} style={{position:'absolute',zIndex:0}} alt='' ref={backupImg}/>
-            <PackImg className={imgClass} style={{position:'absolute',zIndex:1,animationDelay:'0.2s'}} onClick={()=>openPackView(img)} onMouseOver={()=>setMouseOver(true)} onMouseLeave={()=>setMouseOver(false)} ref={displayImg} alt='Pack' src={img.url} onAnimationEnd={(e) => {
+            <PackImg className={imgClass} style={{position:'absolute',zIndex:0}} alt='' ref={backupImg}/>
+            <PackImg className={imgClass} style={{position:'absolute',zIndex:1,animationDelay:'0.2s'}} onClick={()=>openPackView(img)} ref={displayImg} alt='Pack' src={img.url} onAnimationEnd={(e) => {
                 let img = e.target as HTMLImageElement
                 img.className = imgClass
                 img.style.opacity = '100'
