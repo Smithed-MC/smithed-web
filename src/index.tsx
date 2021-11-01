@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom'
 import {Route} from 'react-router'
+import Download from './subpages/Download';
 import Discord from './subpages/Discord';
 import Images from './subpages/Images';
 import Packs from './subpages/Packs';
@@ -14,7 +15,7 @@ import Packs from './subpages/Packs';
 
 const IndexContainer = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   margin: 0px;
   background-color: ${palette.lightBackground};
 
@@ -70,6 +71,7 @@ ReactDOM.render(
         <Route path='/discord' component={Discord}/>
         <Route path='/images' component={Images}/>
         <Route path='/packs/:owner/:id' component={Packs}/>
+        <Route path='/download/:owner/:id' component={Download}/>
         <Route exact path='/' component={App}/>
       </BrowserRouter>
     </IndexContainer>
