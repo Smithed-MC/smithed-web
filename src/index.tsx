@@ -11,6 +11,7 @@ import Download from './subpages/Download';
 import Discord from './subpages/Discord';
 import Images from './subpages/Images';
 import Packs from './subpages/Packs';
+import Libraries from './subpages/Libraries';
 
 
 const IndexContainer = styled.div`
@@ -70,6 +71,7 @@ ReactDOM.render(
       <BrowserRouter>
         <Route path='/discord' component={Discord}/>
         <Route path='/images' component={Images}/>
+        <Route path='/libraries' component={Libraries}/>
         <Route path='/packs/:owner/:id' component={Packs}/>
         <Route path='/download/:owner/:id' component={Download}/>
         <Route exact path='/' component={App}/>

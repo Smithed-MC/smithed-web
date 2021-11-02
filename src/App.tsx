@@ -5,9 +5,10 @@ import { discordUrl } from './subpages/Discord';
 import "animate.css/animate.min.css";
 import ScrollAnimation from 'react-animate-on-scroll';
 import PackGallery, { GalleryImage } from './components/Gallery';
+import { useHistory } from 'react-router';
 
 const DownloadButton = styled.button`
-  width: 128px;
+  width: 148px;
   font-size: 1.25rem;
   height: 48px;
   border-radius: 4px;
@@ -103,6 +104,7 @@ const galleryImages: GalleryImage[] = [
 ]
 
 function AppBody() {
+  const history = useHistory();
   return (
     <BodyContainer>
       <ScrollAnimation animateIn='animate__fadeInUp' delay={1250} animateOnce={true}>
@@ -121,6 +123,7 @@ function AppBody() {
           <div style={{display:'flex',gap: 8}}>
             <DownloadButton onClick={()=>window.open('https://wiki.smithed.dev/')}>Wiki</DownloadButton>
             <DownloadButton onClick={()=>window.open(discordUrl)} style={{backgroundColor:'#5662F6'}}>Discord</DownloadButton>
+            <DownloadButton onClick={()=>history.push('/libraries')}>Libraries</DownloadButton>
           </div>
         </CategoryDiv>
         <br/>

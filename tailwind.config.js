@@ -13,7 +13,10 @@ module.exports = {
         '270': '270px',
         '360': '360px'
       }
-    }
+    },
+  },
+  fontFamily: {
+    'disket': ['Disket']
   },
   variants: {
     extend: {},
