@@ -10,8 +10,5 @@ const firebaseApp = firebase.initializeApp({
 	measurementId: "G-40SRKC35Z0"
 })
 
-firebaseApp.auth().signInAnonymously().then( () => {
-    console.log('Signed into database')
-})
 export const auth = firebaseApp.auth();
 export const database = firebaseApp.database() 
