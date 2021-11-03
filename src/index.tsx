@@ -12,19 +12,20 @@ import Discord from './subpages/Discord';
 import Images from './subpages/Images';
 import Packs from './subpages/Packs';
 import Libraries from './subpages/Libraries';
+import Tools from './subpages/Tools';
 
 
 const IndexContainer = styled.div`
   width: 100%;
   height: 100vh;
   margin: 0px;
-  background-color: ${palette.lightBackground};
 
   position:absolute;
   top:0px;
   right:0px;
   bottom:0px;
   left:0px;
+  
 
   div {
     font-family: Inconsolata;
@@ -65,13 +66,16 @@ const IndexContainer = styled.div`
 
 `
 
+document.body.style.backgroundColor = palette.lightBackground;
+
 ReactDOM.render(
   <React.StrictMode>
-    <IndexContainer>
+    <IndexContainer className='h-full'>
       <BrowserRouter>
         <Route path='/discord' component={Discord}/>
         <Route path='/images' component={Images}/>
         <Route path='/libraries' component={Libraries}/>
+        <Route path='/tools' component={Tools}/>
         <Route path='/packs/:owner/:id' component={Packs}/>
         <Route path='/download/:owner/:id' component={Download}/>
         <Route exact path='/' component={App}/>
