@@ -101,14 +101,14 @@ function ShapelessRecipe() {
 
         for(let i = 0; i < items.length; i++) {
             displays.push(<RecipeItem item={items[i]} index={i}/>)
-            if(items[i].count > 0) {
+            if(items[i].count > 0 && items[i].id !== 'minecraft:air') {
                 ingredientConds.push(buildCondition(i))
             }
         }
         setItemDisplays(displays as never[])
 
         if(ingredientConds.length > 0) {
-            result += `if score count smd.data matches ${ingredientConds.length} if data storage smd:crafter root.temp{shapeless_crafting_input:[${ingredientConds.join()}}]}`
+            result += `if score count smd.data matches ${ingredientConds.length} if data storage smd:crafter root.temp{shapeless_crafting_input:[${ingredientConds.join()}}]} `
         }
 
         result += `run ${outputCommand}`
