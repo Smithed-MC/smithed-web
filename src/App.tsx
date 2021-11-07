@@ -34,7 +34,7 @@ const detectUserEnviroment: () => 'windows' | 'macos' | 'ubuntu' | 'unknown' = (
 
 const downloadStable = () => {
   const os = detectUserEnviroment();
-  const link = 'https://api.github.com/repos/TheNuclearNexus/smithed/releases/latest';
+  const link = 'https://api.github.com/repos/Smithed-MC/smithed/releases/latest';
   if (os === 'unknown') window.open(link)
   fetch(link).then(async (resp) => {
     const data = await resp.json()
@@ -60,9 +60,9 @@ const downloadNightly = () => {
   const os = detectUserEnviroment();
 
   if (os !== 'unknown')
-    window.open(`https://nightly.link/TheNuclearNexus/smithed/workflows/build-prod/master/${os}-artifacts.zip`)
+    window.open(`https://nightly.link/Smithed-MC/smithed/workflows/build-prod/master/${os}-artifacts.zip`)
   else
-    window.open(`https://nightly.link/TheNuclearNexus/smithed/workflows/build-prod/master`)
+    window.open(`https://nightly.link/Smithed-MC/smithed/workflows/build-prod/master`)
 }
 
 const HeaderContainer = styled.div`
