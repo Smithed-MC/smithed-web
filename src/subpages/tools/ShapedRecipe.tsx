@@ -2,6 +2,20 @@ import EventEmitter from "events";
 import React, { useEffect, useRef, useState } from "react";
 import { palette } from "../../Palette";
 
+export function validateId(value: string) {
+    
+    if(!value.match(/([A-Za-z_]+):([A-Za-z_]+)/) && value !== '') {
+        if(value.startsWith('#'))
+            value = value.charAt(0) + 'minecraft:' + value.substring(1)
+        else
+            value = 'minecraft:' + value
+    }
+    else if(value === '')
+        value = 'minecraft:air'
+
+    return value
+}
+
 const items: {id: string, tag: string}[][] = [
     [
         {id: '', tag:''},
@@ -29,8 +43,9 @@ function updateOutputCommand(value: string) {
 }
 
 function updateItemId(row: number, col: number, value: string) {
+    value = validateId(value);
+
     items[row][col]["id"] = value
-    console.log(items)
     recipeEvents.emit('update')
 }
 

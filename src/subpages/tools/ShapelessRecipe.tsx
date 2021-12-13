@@ -1,6 +1,7 @@
 import EventEmitter from "events";
 import React, { useEffect, useRef, useState } from "react";
 import { palette } from "../../Palette";
+import { validateId } from "./ShapedRecipe";
 
 let items: {id: string, tag: string, count: number}[] = [
    {id:'',tag:'',count:1}
@@ -15,6 +16,7 @@ function updateOutputCommand(value: string) {
 }
 
 function updateItemId(idx: number, value: string) {
+    value = validateId(value);
     items[idx]["id"] = value
     
     recipeEvents.emit('update')
