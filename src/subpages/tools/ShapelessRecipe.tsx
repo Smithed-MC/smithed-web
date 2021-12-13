@@ -108,7 +108,7 @@ function ShapelessRecipe() {
         setItemDisplays(displays as never[])
 
         if(ingredientConds.length > 0) {
-            result += `if score count smd.data matches ${ingredientConds.length} if data storage smd:crafter root.temp{shapeless_crafting_input:[${ingredientConds.join()}}]} `
+            result += `if score count smd.data matches ${ingredientConds.length} if data storage smd:crafter root.temp{shapeless_crafting_input:[${ingredientConds.join()}]} `
         }
 
         result += `run ${outputCommand}`
