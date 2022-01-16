@@ -5,14 +5,15 @@ import { palette } from './Palette';
 import App from './App';
 import styled from 'styled-components';
 import reportWebVitals from './reportWebVitals';
-import {BrowserRouter} from 'react-router-dom'
-import {Route} from 'react-router'
+import { BrowserRouter } from 'react-router-dom'
+import { Route } from 'react-router'
 import Download from './subpages/Download';
 import Discord from './subpages/Discord';
 import Images from './subpages/Images';
 import Packs from './subpages/Packs';
 import Libraries from './subpages/Libraries';
 import Tools from './subpages/Tools';
+import { HelmetProvider } from 'react-helmet-async';
 
 
 const IndexContainer = styled.div`
@@ -68,20 +69,26 @@ const IndexContainer = styled.div`
 
 document.body.style.backgroundColor = palette.lightBackground;
 
-ReactDOM.render(
-  <React.StrictMode>
-    <IndexContainer className='h-full'>
-      <BrowserRouter>
-        <Route path='/discord' component={Discord}/>
-        <Route path='/images' component={Images}/>
-        <Route path='/libraries' component={Libraries}/>
-        <Route path='/tools' component={Tools}/>
-        <Route path='/packs/:owner/:id' component={Packs}/>
-        <Route path='/download/:owner/:id' component={Download}/>
-        <Route exact path='/' component={App}/>
-      </BrowserRouter>
-    </IndexContainer>
-  </React.StrictMode>,
+const app = (
+  <HelmetProvider>
+    <React.StrictMode>
+      <IndexContainer className='h-full'>
+        <BrowserRouter>
+          <Route path='/discord' component={Discord} />
+          <Route path='/images' component={Images} />
+          <Route path='/libraries' component={Libraries} />
+          <Route path='/tools' component={Tools} />
+          <Route path='/packs/:owner/:id' component={Packs} />
+          <Route path='/download/:owner/:id' component={Download} />
+          <Route exact path='/' component={App} />
+        </BrowserRouter>
+      </IndexContainer>
+    </React.StrictMode>
+  </HelmetProvider>
+)
+
+ReactDOM.hydrate(
+  app,
   document.getElementById('root')
 );
 

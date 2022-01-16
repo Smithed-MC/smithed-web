@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export const discordUrl = 'https://discord.gg/gkp6UqEUph'
 
@@ -8,6 +8,8 @@ function Discord() {
   useEffect(() => {
     window.location.href = discordUrl;
   }, []);
+
+
 
   return (
     <div>

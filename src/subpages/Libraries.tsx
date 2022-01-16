@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router";
 import { AppHeader } from "../App";
 import { palette } from "../Palette";
@@ -27,6 +28,10 @@ function Libraries() {
 
   return (
     <div>
+        <Helmet>
+            <meta name="description" content="hi"/>
+            <link rel="canonical" href="somelink" />
+        </Helmet>
         <AppHeader hideSubtitle={true}/>
         <div className="w-full h-full p-4 flex flex-wrap place-content-center gap-4 flex-wrap">
             <LibraryPane name="Smithed Core" slug="smithed-core" source="https://github.com/TheNuclearNexus/SmithedCore" docs="https://wiki.smithed.dev/libraries/smithed-core" description="This library serves as the base for all other libraries but also provides useful functions itself. 'Core' contains tools for custom durability, damage based on a score, custom block placement, and more!"/>
