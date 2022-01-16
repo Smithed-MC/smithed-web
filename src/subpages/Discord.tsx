@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet";
 
 export const discordUrl = 'https://discord.gg/gkp6UqEUph'
 
@@ -10,6 +11,13 @@ function Discord() {
 
   return (
     <div>
+      <Helmet>
+        <meta
+          name="description"
+          id="metaDesc"
+          content="Join the Smithed Discord!"
+        />
+      </Helmet>
     </div>
   );
 }
