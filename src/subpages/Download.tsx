@@ -3,7 +3,6 @@ import DefaultResourcepackBuilder from "slimeball/out/resourcepack";
 import JSZip from "jszip";
 import { PackBuilder } from "slimeball/out/util";
 import { firebaseApp } from "../setup-firebase"
-import latestSemver from "latest-semver";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { AppHeader } from "../App";
@@ -66,7 +65,7 @@ async function fetchFile(url: string): Promise<Buffer|null> {
             const buffer = await resp.arrayBuffer()
             return buffer as Buffer;
         } else {
-            throw `Error while downloading pack! ${resp.json()}`
+            throw new Error(`Error while downloading pack! ${resp.json()}`)
         }
     } catch (e: any) {
         console.log(e)
