@@ -4,7 +4,7 @@ import JSZip from "jszip";
 import { PackBuilder } from "slimeball/out/util";
 import { firebaseApp } from "../setup-firebase"
 import { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { AppHeader } from "../App";
 
 const { saveAs } = require('save-as')
@@ -129,7 +129,7 @@ function incrementDownloads() {
     fetch(`https://vercel.smithed.dev/api/update-download?packs=${JSON.stringify(packIds)}`, {mode:'no-cors'})
 }
 
-export async function downloadAndMerge(owner: string, id: string, version: string) {
+export async function downloadAndMerge(owner: string, id: string, version: string, callback: () => void) {
     datapacks = []
     resourcepacks = []
 
@@ -153,19 +153,21 @@ export async function downloadAndMerge(owner: string, id: string, version: strin
         await generateFinal(rpb, resourcepacks, `${id}-resourcepack.zip`)
     }
 
+    callback()
 }
 
 
 function Download(props: any) {
     const { owner, id, version }: {owner: string, id:string, version:string} = useParams()
     const [status, setStatus] = useState('')
+    const history = useHistory()
 
     useEffect(()=>{
         setStatus(`Downloading ${id}`)
-        downloadAndMerge(owner, id, version).then(() => {
+        downloadAndMerge(owner, id, version, () => {
             setStatus(`Done! You can close this window`)
         })
-    }, [owner, id, version])
+    }, [owner, id, version, history])
 
     return (
         <div className='flex items-center flex-col h-full'>
