@@ -100,6 +100,10 @@ const galleryImages: GalleryImage[] = [
   {
     url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/863/14897790-ocean-additions-thumbnaillogo_l.webp',
     pack: 'primalugly/ocean_additions'
+  },
+  {
+    url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/125/15241252-untitled_l.webp',
+    pack: 'nia_/manic'
   }
 ]
 
