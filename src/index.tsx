@@ -14,6 +14,7 @@ import Packs from './subpages/Packs';
 import Libraries from './subpages/Libraries';
 import Tools from './subpages/Tools';
 import { HelmetProvider } from 'react-helmet-async';
+import { QueryParamProvider } from 'use-query-params';
 
 
 const IndexContainer = styled.div`
@@ -74,13 +75,15 @@ const app = (
     <React.StrictMode>
       <IndexContainer className='h-full'>
         <BrowserRouter>
-          <Route path='/discord' component={Discord} />
-          <Route path='/images' component={Images} />
-          <Route path='/libraries' component={Libraries} />
-          <Route path='/tools' component={Tools} />
-          <Route path='/packs/:owner/:id' component={Packs} />
-          <Route path='/download/:owner/:id' component={Download} />
-          <Route exact path='/' component={App} />
+          <QueryParamProvider ReactRouterRoute={Route}>
+            <Route path='/discord' component={Discord} />
+            <Route path='/images' component={Images} />
+            <Route path='/libraries' component={Libraries} />
+            <Route path='/tools' component={Tools} />
+            <Route path='/packs/:owner/:id' component={Packs} />
+            <Route path='/download' component={Download} />
+            <Route exact path='/' component={App} />
+          </QueryParamProvider>
         </BrowserRouter>
       </IndexContainer>
     </React.StrictMode>
