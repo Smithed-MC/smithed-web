@@ -5,14 +5,16 @@ import { PackBuilder } from "slimeball/out/util";
 import { firebaseApp } from "../setup-firebase"
 import { useState, useEffect, useCallback } from "react";
 import { AppHeader } from "../App";
-import { ArrayParam, StringParam, useQueryParam } from "use-query-params";
-
-const { saveAs } = require('save-as')
+import { ArrayParam, BooleanParam, StringParam, useQueryParam, withDefault } from "use-query-params";
+import { saveAs } from 'file-saver'
 
 let datapacks: [string, Buffer][] = []
 let resourcepacks: [string, Buffer][] = []
 let packIds: string[] = []
 let gameVersion: string = '1.18.1'
+
+let dpBlob: [string, Blob] = ['', new Blob()]
+let rpBlob: [string, Blob] = ['', new Blob()]
 
 async function getPackData(uid: string, id: string) {
     const ownerPacks = (await firebaseApp.database().ref(`users/${uid}/packs`).get()).val() as any[]
@@ -47,13 +49,13 @@ async function getVersionData(pack: any, version?: string): Promise<any> {
         console.log('did we make it')
         versionData = pack.versions.find((v: any) => v.name === version)
     } else {
-        let versions: {name: string, supports: string[]}[] = pack.versions;
+        let versions: { name: string, supports: string[] }[] = pack.versions;
         versionData = versions.reverse().find((v) => v.supports.includes(gameVersion))
-        if(versionData == null) {
+        if (versionData == null) {
             let supports: string[] = []
-            for(let v of versions)
-                for(let s of v.supports)
-                    if(!supports.includes(s)) supports.push(s)
+            for (let v of versions)
+                for (let s of v.supports)
+                    if (!supports.includes(s)) supports.push(s)
 
             alert(`Valid version could not be found for pack '${pack.id}' on Minecraft Version ${gameVersion}!\n'${pack.id}' supports: ${supports.join(', ')}\nTry adding '&version=<gameVersion>' to resolve the issue!`)
             return null
@@ -122,20 +124,24 @@ async function startDownload(owner: string, id: string, version?: string) {
     }
 }
 
-async function generateFinal(builder: PackBuilder, packs: [string, Buffer][], name: string) {
+async function generateFinal(builder: PackBuilder, packs: [string, Buffer][]) {
     await builder.loadBuffers(packs)
-    await builder.build(async (r) => {
-        await saveAs(await r.zip.generateAsync({ type: 'blob' }), name)
-    })
+    const r = await builder.build()
+
+    const blob = await r.zip.generateAsync({ type: 'blob' })
+
+    return blob
 }
 
 function incrementDownloads() {
     fetch(`https://vercel.smithed.dev/api/update-download?packs=${JSON.stringify(packIds)}`, { mode: 'no-cors' })
 }
 
-export async function downloadAndMerge(packs: { id: string, owner: string, version: string | undefined }[], callback: () => void) {
+export async function downloadAndMerge(packs: { id: string, owner: string, version: string | undefined }[], auto: boolean, callback: () => void) {
     datapacks = []
     resourcepacks = []
+    dpBlob[0] = ''
+    rpBlob[0] = ''
 
     packIds = []
 
@@ -151,16 +157,25 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
         if (jar != null) {
             console.log(jar);
             const dpb = new WeldDatapackBuilder(await JSZip.loadAsync(jar))
-            await generateFinal(dpb, datapacks, packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip')
+
+            const blob = await generateFinal(dpb, datapacks)
+            const name = packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip'
+            if (auto) saveAs(blob, name)
+            else dpBlob = [name, blob]
         }
     }
     if (resourcepacks.length > 0) {
         const rpb = new DefaultResourcepackBuilder();
-        await generateFinal(rpb, resourcepacks, packs.length === 1 ? `${packs[0].id}-resourcepack.zip` : 'resourcepacks.zip')
+
+        const blob = await generateFinal(rpb, resourcepacks)
+        const name = packs.length === 1 ? `${packs[0].id}-resourcepack.zip` : 'resourcepack.zip'
+        if (auto) saveAs(blob, name)
+        else rpBlob = [name, blob]
     }
 
     callback()
 }
+
 
 
 function Download(props: any) {
@@ -168,7 +183,9 @@ function Download(props: any) {
     const [status, setStatus] = useState(<></> as JSX.Element)
     const [packs] = useQueryParam('pack', ArrayParam)
     const [version] = useQueryParam('version', StringParam)
+    const [auto] = useQueryParam('auto', withDefault(BooleanParam, false))
 
+    console.log(auto)
     console.log(version)
     console.log(packs)
 
@@ -181,7 +198,7 @@ function Download(props: any) {
     }, [])
 
     useEffect(() => {
-        if(version != null && version !== '')
+        if (version != null && version !== '')
             gameVersion = version
         else
             gameVersion = '1.18.1'
@@ -198,17 +215,27 @@ function Download(props: any) {
         }
 
 
-        downloadAndMerge(finalPacks, () => {
-            let completeText = [<h2>{`Done downloading:`}</h2>]
+        downloadAndMerge(finalPacks, auto, () => {
+            let completeText = []
             for (let p of packIds)
-                completeText.push(<label className="text-2xl">{' - ' + p}</label>)
+                completeText.push(<label className="text-2xl">{p}</label>)
             setStatus(
-                <div className="flex flex-col">
-                    {completeText}
+                <div className="flex flex-col items-center w-1/4">
+                    {!auto && <div className="flex flex-col items-center w-full">
+                        <h2>Download</h2>
+                        <div className="flex flex-row w-full h-full justify-center gap-2">
+                            {dpBlob[0] !== '' && <button className="w-1/2 h-10" onClick={() => saveAs(dpBlob[1], dpBlob[0])}>Datapack</button>}
+                            {rpBlob[0] !== '' && <button className="w-1/2 h-10" onClick={() => saveAs(rpBlob[1], rpBlob[0])}>Resourcepack</button>}
+                        </div>
+                    </div>}
+                    <h2>{`Contents`}</h2>
+                    <div className="flex flex-col">
+                        {completeText}
+                    </div>
                 </div>
             )
         })
-    }, [packs, packStringToObject, version])
+    }, [packs, packStringToObject, version, auto])
 
     return (
         <div className='flex items-center flex-col h-full'>
