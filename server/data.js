@@ -78,7 +78,7 @@ const packsMeta = async (req) => {
     for (let p of userPacks.val()) {
         if (p.id === id) {
             return {
-                title: p.display.name + '| Smithed',
+                title: p.display.name + '  |  Smithed',
                 description: p.display.description,
                 image: p.display.icon
             }
