@@ -14,7 +14,12 @@ fs.readFile(filePath, "utf8", (err, data) => {
     }
 
     for (let path in pages) {
-        app.get(path, (req, res) => {
+        if(path.startsWith('r')) {
+            var regPath = new RegExp(path.substring(1), 'g')
+            console.log(regPath)
+        }
+
+        app.get(regPath !== undefined ? regPath : path, (req, res) => {
             pages[path](req).then(meta => {
                 let index = data
                 for (let m in meta) {

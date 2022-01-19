@@ -28,6 +28,7 @@
     "js-yaml": "^3.14.1",
     "jszip-utils": "^0.1.0",
     "latest-semver": "^4.0.0",
+    "path-to-regexp": "^6.2.0",
     "protocol-checker": "^1.2.2",
     "query-string": "^7.1.0",
     "react": "^17.0.2",
