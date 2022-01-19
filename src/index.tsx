@@ -13,7 +13,6 @@ import Images from './subpages/Images';
 import Packs from './subpages/Packs';
 import Libraries from './subpages/Libraries';
 import Tools from './subpages/Tools';
-import { HelmetProvider } from 'react-helmet-async';
 import { QueryParamProvider } from 'use-query-params';
 
 
@@ -71,7 +70,6 @@ const IndexContainer = styled.div`
 document.body.style.backgroundColor = palette.lightBackground;
 
 const app = (
-  <HelmetProvider>
     <React.StrictMode>
       <IndexContainer className='h-full'>
         <BrowserRouter>
@@ -83,14 +81,14 @@ const app = (
             <Route path='/packs/:owner/:id' component={Packs} />
             <Route path='/download' component={Download} />
             <Route exact path='/' component={App} />
+            <meta/>
           </QueryParamProvider>
         </BrowserRouter>
       </IndexContainer>
     </React.StrictMode>
-  </HelmetProvider>
 )
 
-ReactDOM.hydrate(
+ReactDOM.render(
   app,
   document.getElementById('root')
 );
