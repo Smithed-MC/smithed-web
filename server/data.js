@@ -40,7 +40,7 @@ const packsMeta = async (req) => {
             return {
                 title: p.display.name,
                 description: p.display.description,
-                image: p.display.image
+                image: p.display.icon
             }
         }
     }
