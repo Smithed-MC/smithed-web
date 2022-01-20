@@ -27,7 +27,6 @@ interface PackData {
 function Packs(props: any) {
     const { owner, id }: { owner: string, id: string } = useParams()
     const history = useHistory();
-    const [hidePage, setHidePage] = useState(true);
     const [packData, setPackData] = useState({} as PackData);
     const [maxVersions, setMaxVersions] = useState(5)
 
@@ -37,9 +36,6 @@ function Packs(props: any) {
             () => {
                 alert('You haven\'t installed Smithed!')
                 history.replace('/')
-            },
-            () => {
-                setHidePage(false)
             }
         )
     }
@@ -124,7 +120,7 @@ function Packs(props: any) {
 
     const markdown: MarkdownToJSX.Options = {
         overrides: {
-            h1: <h1 style={{ fontSize: '2.5rem' }}></h1>,
+            h1: <h1 style={{ fontSize: '2.5rem' }}><hr/></h1>,
             h2: <h2 style={{ fontSize: '2rem', color: 'white' }}><hr /></h2>,
             h3: <h3 style={{ fontSize: '1.5rem', color: 'white' }}><hr /></h3>,
             pre: styled.pre`background-color: #24232B; padding: 8px; border-radius: 4px;`
