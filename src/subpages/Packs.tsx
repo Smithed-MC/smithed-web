@@ -18,7 +18,10 @@ interface PackData {
     icon: '',
     webPage: '',
     description: '',
-    versions: VersionData[]
+    versions: VersionData[],
+    downloads: number,
+    added: number,
+    updated: number
 }
 
 function Packs(props: any) {
@@ -42,16 +45,38 @@ function Packs(props: any) {
     }
 
     useEffect(() => {
-        database.ref(`/packs/${owner}:${id}`).get().then(async (snap) => {
-            console.log(snap.val())
-            if (!snap.exists()) return;
-            const uid = snap.val().owner
+        database.ref(`/packs/${owner}:${id}`).get().then(async (entry) => {
+            if (!entry.exists()) return;
+            const uid = entry.val().owner
             const packs = await database.ref(`/users/${uid}/packs`).get()
 
             if (!packs.exists) return;
             for (let p of packs.val()) {
                 if (p.id === id) {
-                    p.display.versions = p.versions
+                    if (p.versions instanceof Array)
+                        p.display.versions = p.versions
+                    else {
+                        p.display.versions = []
+                        for (let v in p.versions) {
+                            const version = p.versions[v]
+                            version.name = v.replaceAll('_', '.')
+                            p.display.versions.push(version)
+                        }
+                    }
+
+                    p.display.added = entry.val().added
+
+                    const dateAdded = new Date(entry.val().updated !== undefined ? entry.val().updated : entry.val().added)
+                    p.display.updated = Math.floor(Math.abs(dateAdded.getTime() - Date.now()) / (1000 * 3600 * 24))
+
+
+                    let count = 0
+                    entry.child('downloads').forEach((c) => {
+                        count += c.numChildren()
+                    })
+
+                    p.display.downloads = count
+
                     console.log(p.versions)
                     if (p.display.webPage === '') {
                         p.display.webPage = p.display.description
@@ -83,14 +108,16 @@ function Packs(props: any) {
         for (let i = 0; i < versions.length && i < maxVersions; i++) {
             const v = versions[versions.length - i - 1]
 
-            versionElements.push(<div className='flex flex-col items-center w-full'>
+            versionElements.push(<div className='flex flex-col items-left w-full'>
                 <h3 style={{ color: 'white' }}>{v.name}</h3>
-                <div className='flex flex-row justify-between w-2/3'>
+                <div className='flex flex-row gap-4 w-full'>
                     <label className='p-2 rounded-md' style={{ backgroundColor: palette.lightBackground }}>{v.supports.join(', ')}</label>
-                    <button className='p-2 rounded-md'>DOWNLOAD</button>
+                    <button className='p-2 rounded-md' onClick={() => {
+                        history.push(`/download?pack=${owner}:${id}@${v.name}`)
+                    }}>DOWNLOAD</button>
                 </div>
             </div>)
-            
+
         }
         return versionElements;
     }
@@ -108,7 +135,6 @@ function Packs(props: any) {
         <AppHeader hideSubtitle={true} />
         <h1>Loading...</h1>
     </div>)
-
 
 
     return (
@@ -129,12 +155,30 @@ function Packs(props: any) {
                     </Markdown>
                 </div>
                 <div className='flex w-1/4 justify-center px-4'>
-                    <div className='flex flex-col p-2 w-full items-center' style={{ borderRadius: 8, border: `4px solid #1B48C4`, backgroundColor: palette.darkBackground }}>
+                    <div className='flex flex-col p-2 w-3/4 items-left' style={{ borderRadius: 8, border: `4px solid #1B48C4`, backgroundColor: palette.darkBackground }}>
+                        <h2 style={{ color: 'white' }}>About</h2>
+                        <hr className='w-full h-2' />
+                        <div className='flex flex-col gap-1'>
+                            <div className='flex flex-row justify-between items-center w-full'>
+                                <label style={{ color: 'white' }}>Added:</label>
+                                <label className='p-1 rounded-md' style={{ backgroundColor: palette.lightBackground }}>{new Date(packData.added).toLocaleDateString()}</label>
+                            </div>
 
+                            <div className='flex flex-row justify-between items-center w-full'>
+                                <label style={{ color: 'white' }}>Updated:</label>
+                                <label className='p-1 rounded-md' style={{ backgroundColor: palette.lightBackground }}>{packData.updated} day{packData.updated !== 1 && 's'} ago</label>
+                            </div>
+
+                            <div className='flex flex-row justify-between items-center w-full'>
+                                <label style={{ color: 'white' }}>Downloads:</label>
+                                <label className='p-1 rounded-md' style={{ backgroundColor: palette.lightBackground }}>{packData.downloads}</label>
+                            </div>
+                        </div>
+                        <br />
                         <h2 style={{ color: 'white' }}>Downloads</h2>
                         <hr className='w-full h-2' />
-                        <button className='p-2 rounded-md w-1/2 mb-2' onClick={() => protocol()}>VIEW IN SMITHED</button>
-                        <button className='p-2 rounded-md w-1/2 mb-2' onClick={() => {
+                        <button className='p-2 rounded-md w-full mb-2' onClick={() => protocol()}>VIEW IN SMITHED</button>
+                        <button className='p-2 rounded-md w-full mb-2' onClick={() => {
                             const supports = packData.versions[packData.versions.length - 1].supports
                             history.push(`/download?pack=${owner}:${id}&version=${supports[0]}`)
                         }}>DOWNLOAD LATEST</button>
