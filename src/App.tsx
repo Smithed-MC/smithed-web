@@ -76,7 +76,7 @@ export function AppHeader(props: any) {
   const history = useHistory()
   return (
     <HeaderContainer id="smithedHeader">
-      <h1 onClick={()=>{history.push('/')}} className='text-white hover:text-gray-300'>{'<SMITHED/>'}</h1>
+      <h1 onClick={()=>{history.push('/')}} className='text-white hover:text-gray-300' style={{marginTop:'-8px', marginBottom: '-8px'}}>{'<SMITHED/>'}</h1>
       <h3 style={{ marginTop: -16 }} hidden={props.hideSubtitle}>{'{Datapack Launcher}'}</h3>
       <div style={{ backgroundColor: palette.lightAccent, height: 6 }} />
     </HeaderContainer>
