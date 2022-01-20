@@ -123,7 +123,17 @@ function Packs(props: any) {
             h1: <h1 style={{ fontSize: '2.5rem' }}><hr/></h1>,
             h2: <h2 style={{ fontSize: '2rem', color: 'white' }}><hr /></h2>,
             h3: <h3 style={{ fontSize: '1.5rem', color: 'white' }}><hr /></h3>,
-            pre: styled.pre`background-color: #24232B; padding: 8px; border-radius: 4px;`
+            pre: styled.pre`background-color: #24232B; padding: 8px; border-radius: 4px;`,
+            a: styled.a`
+                color: #216BEA;
+                text-decoration: underline;
+                :hover {
+                    filter: brightness(90%);
+                }
+                :active {
+                    color: #1B48C4;
+                }
+            `
         }
     }
 
