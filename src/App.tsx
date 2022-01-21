@@ -90,25 +90,31 @@ const BodyContainer = styled.div`
 `
 const galleryImages: GalleryImage[] = [
   {
-    url: 'https://github.com/Geegaz-Datapacks/GGDK-Data/blob/main/img/title_image.jpg?raw=true',
-    pack: '',
-    name: 'GGDK by Geegaz'
-  },
-  {
     url: 'https://static.planetminecraft.com/files/resource_media/screenshot/14336380-thumbnail.jpg',
     pack: 'creepermagnet_/tcc',
     name: 'The Creeper\'s Code by CreeperMagnet_'
+  },
+  {
+    url: 'https://github.com/RagtimeGal/DnD/blob/main/other/Images/banner.png?raw=true',
+    pack: 'ragno/dnd',
+    name: 'Dinosaurs & Dodos by Ragno'
+  },
+  {
+    url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/125/15241252-untitled_l.webp',
+    pack: 'nia_/manic',
+    name: 'Manic by Nia_'
+  },
+  {
+    url: 'https://github.com/Geegaz-Datapacks/GGDK-Data/blob/main/img/title_image.jpg?raw=true',
+    pack: '',
+    name: 'GGDK by Geegaz'
   },
   {
     url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/863/14897790-ocean-additions-thumbnaillogo_l.webp',
     pack: '',
     name: 'Ocean Additions by Primalugly'
   },
-  {
-    url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/125/15241252-untitled_l.webp',
-    pack: 'nia_/manic',
-    name: 'Manic by Nia_'
-  }
+  
 ]
 
 function AppBody() {
