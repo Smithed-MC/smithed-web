@@ -146,11 +146,11 @@ function Packs(props: any) {
     return (
         <div className='flex flex-col gap-4'>
             <AppHeader hideSubtitle={true} />
-            <div className='flex flex-row'>
-                <div style={{ flex: '25%' }}>
+            <div className='flex flex-col p-2 xl:flex-row'>
+                <div className='xl:w-1/4'>
                     {/* {renderSupport()} */}
                 </div>
-                <div className='flex flex-col gap-2 w-1/2'>
+                <div className='flex flex-col gap-2 xl:w-1/2'>
                     <div className='flex w-full gap-2 justify-left'>
                         <img style={{ width: 64, height: 64, border: `4px solid #1B48C4`, borderRadius: 8 }} src={packData.icon} alt="Pack Icon" />
                         <label style={{ fontFamily: 'Disket-Bold', fontSize: 18, alignSelf: 'center', width: '100%', WebkitUserSelect: 'none' }}>{packData.name}</label>
@@ -160,7 +160,7 @@ function Packs(props: any) {
                         {packData.webPage}
                     </Markdown>
                 </div>
-                <div className='flex w-1/4 justify-center px-4'>
+                <div className='flex w-full xl:w-1/4 justify-center px-4'>
                     <div className='flex flex-col p-2 w-3/4 items-left' style={{ borderRadius: 8, border: `4px solid #1B48C4`, backgroundColor: palette.darkBackground }}>
                         <h2 style={{ color: 'white' }}>About</h2>
                         <hr className='w-full h-2' />
