@@ -96,7 +96,7 @@ const galleryImages: GalleryImage[] = [
   },
   {
     url: 'https://static.planetminecraft.com/files/resource_media/screenshot/14336380-thumbnail.jpg',
-    pack: 'creepermagnet/tcc',
+    pack: 'creepermagnet_/tcc',
     name: 'The Creeper\'s Code by CreeperMagnet_'
   },
   {
