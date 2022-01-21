@@ -76,7 +76,7 @@ export function AppHeader(props: any) {
   const history = useHistory()
   return (
     <HeaderContainer id="smithedHeader">
-      <h1 onClick={()=>{history.push('/')}} className='text-white hover:text-gray-300' style={{marginTop:'-8px', marginBottom: '-8px'}}>{'<SMITHED/>'}</h1>
+      <h1 onClick={()=>{history.push('/')}} className='text-white hover:text-gray-300 cursor-pointer' style={{marginTop:'-8px', marginBottom: '-8px'}}>{'<SMITHED/>'}</h1>
       <h3 style={{ marginTop: -16 }} hidden={props.hideSubtitle}>{'{Datapack Launcher}'}</h3>
       <div style={{ backgroundColor: palette.lightAccent, height: 6 }} />
     </HeaderContainer>
@@ -91,19 +91,23 @@ const BodyContainer = styled.div`
 const galleryImages: GalleryImage[] = [
   {
     url: 'https://github.com/Geegaz-Datapacks/GGDK-Data/blob/main/img/title_image.jpg?raw=true',
-    pack: 'geegaz/ggdk'
+    pack: '',
+    name: 'GGDK by Geegaz'
   },
   {
     url: 'https://static.planetminecraft.com/files/resource_media/screenshot/14336380-thumbnail.jpg',
-    pack: 'creepermagnet/tcc'
+    pack: 'creepermagnet/tcc',
+    name: 'The Creeper\'s Code by CreeperMagnet_'
   },
   {
     url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/863/14897790-ocean-additions-thumbnaillogo_l.webp',
-    pack: 'primalugly/ocean_additions'
+    pack: '',
+    name: 'Ocean Additions by Primalugly'
   },
   {
     url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/125/15241252-untitled_l.webp',
-    pack: 'nia_/manic'
+    pack: 'nia_/manic',
+    name: 'Manic by Nia_'
   }
 ]
 

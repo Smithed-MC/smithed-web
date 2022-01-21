@@ -5,7 +5,8 @@ import '../index.css'
 import { useHistory } from 'react-router';
 export interface GalleryImage {
     url: string,
-    pack: string
+    pack: string,
+    name: string
 }
 
 interface GalleryProps {
@@ -17,6 +18,7 @@ interface GalleryProps {
 
 
 const PackImg = styled.img`
+    cursor: pointer;
     :hover {
         filter: brightness(85%);
     }
@@ -25,66 +27,44 @@ const PackImg = styled.img`
     }
 `
 
-const animationClass = "animate__animated animate__fadeIn "
 
 function PackGallery(props: GalleryProps) {
     const [imgIndex, setImgIndex] = useState(0)
     const history = useHistory()
-    const displayImg = useRef(null)
-    const backupImg = useRef(null)
+    const text = useRef(null)
 
 
     const openPackView = (img: GalleryImage) => {
+        if(img.pack === '') return;
+
         history.push('/packs/' + img.pack)
-    }
-
-    const applyFade = () => {
-        const cur = displayImg.current
-        if(cur != null) {
-            const imgRef = cur as HTMLImageElement
-
-            imgRef.className = animationClass + imgRef.className
-        }
     }
 
     const init = () => {
         setTimeout(() => {
-
-            const cur = backupImg.current;
-            if(cur != null) {
-                const ref = cur as HTMLImageElement;
-
-                if(displayImg.current != null) {
-                    let og = (displayImg.current as HTMLImageElement)
-                    og.style.opacity = '0'
-                    ref.src = og.src
-                    ref.hidden = false
-                }
-            }
             setImgIndex((imgIndex + 1) % props.images.length);
         }, props.scrollSpeed)
     }
 
-    useEffect(()=>{applyFade();})
-    
-    useEffect(init, [imgIndex, props, setImgIndex, backupImg, init])
-    
+
+    useEffect(init, [imgIndex, props, setImgIndex, init])
+
     const img = props.images[imgIndex]
 
     const imgClass = "w-320 h-180 md:w-480 md:h-270 lg:w-640 lg:h-360"
 
+    // const setTextStatus = (hidden: boolean) => {
+    //     if(text.current == null) return; (text.current as HTMLLabelElement).hidden = hidden
+    // }
+
     return (
-        <div className={imgClass} style={props.style}>
-            <PackImg className={imgClass} style={{position:'absolute',zIndex:0}} alt='' ref={backupImg}/>
-            <PackImg className={imgClass} style={{position:'absolute',zIndex:1,animationDelay:'0.2s'}} onClick={()=>openPackView(img)} ref={displayImg} alt='Pack' src={img.url} onAnimationEnd={(e) => {
+        <div className={'relative ' + imgClass} style={props.style}>
+            <label className='absolute z-10 text-md m-2 px-2 md:text-lg lg:text-xl bottom-0 left-0' style={{backgroundColor:'rgba(0,0,0,0.75)'}} ref={text}>{img.name}</label>
+            <PackImg className={imgClass  + ' border-4 rounded-md border-dark-accent'} style={{ animationDelay: '0.2s' }} onClick={() => openPackView(img)} alt='Pack' src={img.url} onAnimationEnd={(e) => {
                 let img = e.target as HTMLImageElement
                 img.className = imgClass
                 img.style.opacity = '100'
-
-                if(backupImg.current != null) {
-                    (backupImg.current as HTMLImageElement).hidden = true
-                }
-            }}/>
+            }}/> {/*onMouseEnter={()=>{setTextStatus(false)}} onMouseLeave={()=>{setTextStatus(true)}}*/}
         </div>
     )
 }

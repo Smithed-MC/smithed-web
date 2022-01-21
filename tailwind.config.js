@@ -12,6 +12,10 @@ module.exports = {
         '180': '180px',
         '270': '270px',
         '360': '360px'
+      },
+      colors: {
+        'light-accent': '#216BEA',
+        'dark-accent': '#1B48C4'
       }
     },
   },
