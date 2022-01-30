@@ -166,7 +166,7 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
         const jar = await fetchFile(jarLink);
         if (jar != null) {
             console.log(jar);
-            const dpb = new WeldDatapackBuilder(await JSZip.loadAsync(jar))
+            const dpb = new WeldDatapackBuilder(gameVersion)
 
             const blob = await generateFinal(dpb, datapacks)
             const name = packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip'
