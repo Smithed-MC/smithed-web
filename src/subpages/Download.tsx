@@ -137,20 +137,30 @@ function incrementDownloads() {
     fetch(`https://vercel.smithed.dev/api/update-download?packs=${JSON.stringify(packIds)}`, { mode: 'no-cors' })
 }
 
-export async function downloadAndMerge(packs: { id: string, owner: string, version: string | undefined }[], auto: boolean, callback: () => void) {
+let bothName = ''
+async function downloadZip() {
+    const final = new JSZip()
+    final.file(rpBlob[0], rpBlob[1])
+    final.file(dpBlob[0], dpBlob[1])
+
+    saveAs(await final.generateAsync({type:'blob'}), bothName)
+}
+
+export async function downloadAndMerge(packs: { id: string, owner: string, version: string | undefined }[], auto: boolean, both: boolean, callback: () => void) {
     datapacks = []
     resourcepacks = []
     dpBlob[0] = ''
     rpBlob[0] = ''
 
     packIds = []
-
+    
     for (let p of packs) {
         await startDownload(p.owner, p.id, p.version)
     }
-
+    
+    bothName = packs.length === 1 ? `${packs[0].id}-both.zip` : `packs-both.zip`
     incrementDownloads()
-
+    
     if (datapacks.length > 0) {
         const jarLink = (await firebaseApp.database().ref(`meta/vanilla/${gameVersion.replace(/[.]+/g, '_')}`).get()).val()
         const jar = await fetchFile(jarLink);
@@ -160,7 +170,7 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
 
             const blob = await generateFinal(dpb, datapacks)
             const name = packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip'
-            if (auto) saveAs(blob, name)
+            if (auto && !(both && resourcepacks.length > 0)) saveAs(blob, name)
             else dpBlob = [name, blob]
         }
     }
@@ -169,10 +179,12 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
 
         const blob = await generateFinal(rpb, resourcepacks)
         const name = packs.length === 1 ? `${packs[0].id}-resourcepack.zip` : 'resourcepack.zip'
-        if (auto) saveAs(blob, name)
+        if (auto && !(both && datapacks.length > 0)) saveAs(blob, name)
         else rpBlob = [name, blob]
     }
-
+    if (auto && both) {
+        downloadZip();
+    }
     callback()
 }
 
@@ -180,10 +192,14 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
 
 function Download(props: any) {
     // const { owner, id, version }: {owner: string, id:string, version:string} = useParams()
-    const [status, setStatus] = useState(<></> as JSX.Element)
+    const [status, setStatus] = useState(<div className="flex items-center flex-col">
+        <h1>Downloading packs!</h1>
+        <h2>This may take a few seconds!</h2>
+    </div>)
     const [packs] = useQueryParam('pack', ArrayParam)
     const [version] = useQueryParam('version', StringParam)
     const [auto] = useQueryParam('auto', withDefault(BooleanParam, false))
+    const [both] = useQueryParam('both', withDefault(BooleanParam, true))
 
     console.log(auto)
     console.log(version)
@@ -215,7 +231,7 @@ function Download(props: any) {
         }
 
 
-        downloadAndMerge(finalPacks, auto, () => {
+        downloadAndMerge(finalPacks, auto, both, () => {
             let completeText = []
             for (let p of packIds)
                 completeText.push(<label className="text-2xl">{p}</label>)
@@ -223,10 +239,16 @@ function Download(props: any) {
                 <div className="flex flex-col items-center w-1/4">
                     {!auto && <div className="flex flex-col items-center w-full">
                         <h2>Download</h2>
-                        <div className="flex flex-row w-full h-full justify-center gap-2">
+                        <div className="flex flex-row w-full h-full justify-center gap-2 mb-2">
                             {dpBlob[0] !== '' && <button className="w-1/2 h-10" onClick={() => saveAs(dpBlob[1], dpBlob[0])}>Datapack</button>}
                             {rpBlob[0] !== '' && <button className="w-1/2 h-10" onClick={() => saveAs(rpBlob[1], rpBlob[0])}>Resourcepack</button>}
                         </div>
+                        <div className="flex flex-row w-full h-full justify-center gap-2">
+                            {rpBlob[0] !== '' && dpBlob[0] !== '' && <button className="w-1/2 h-10" onClick={() => {
+                                downloadZip();
+                            }}>Both</button>}
+                        </div>
+
                     </div>}
                     <h2>{`Contents`}</h2>
                     <div className="flex flex-col">
@@ -235,7 +257,7 @@ function Download(props: any) {
                 </div>
             )
         })
-    }, [packs, packStringToObject, version, auto])
+    }, [packs, packStringToObject, version, auto, both])
 
     return (
         <div className='flex items-center flex-col h-full'>
