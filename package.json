@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "npm i craco && craco build",
+    "build": "npm i craco && npm i tailwindcss && craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
