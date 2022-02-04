@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
@@ -21,9 +21,6 @@ module.exports = {
   },
   fontFamily: {
     'disket': ['Disket']
-  },
-  variants: {
-    extend: {},
   },
   plugins: [],
 }
