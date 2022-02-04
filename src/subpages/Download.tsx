@@ -3,7 +3,7 @@ import DefaultResourcepackBuilder from "slimeball/out/resourcepack";
 import JSZip from "jszip";
 import { PackBuilder } from "slimeball/out/util";
 import { firebaseApp } from "../setup-firebase"
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, SetStateAction, Dispatch } from "react";
 import { AppHeader } from "../App";
 import { ArrayParam, BooleanParam, StringParam, useQueryParam, withDefault } from "use-query-params";
 import { saveAs } from 'file-saver'
@@ -119,6 +119,12 @@ async function startDownload(owner: string, id: string, version?: string) {
     const dbEntry = (await firebaseApp.database().ref(`packs/${owner}:${id}`).get()).val()
     packIds.push(owner + ':' + id)
 
+    setStatus
+    (<div>
+        <h1>Downloading pack:</h1>
+        <h2>{owner}:{id}</h2>
+    </div>)
+
     if (dbEntry != null) {
         await downloadPack(dbEntry, id, version)
     }
@@ -143,7 +149,7 @@ async function downloadZip() {
     final.file(rpBlob[0], rpBlob[1])
     final.file(dpBlob[0], dpBlob[1])
 
-    saveAs(await final.generateAsync({type:'blob'}), bothName)
+    saveAs(await final.generateAsync({ type: 'blob' }), bothName)
 }
 
 export async function downloadAndMerge(packs: { id: string, owner: string, version: string | undefined }[], auto: boolean, both: boolean, callback: () => void) {
@@ -153,34 +159,79 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
     rpBlob[0] = ''
 
     packIds = []
-    
+
     for (let p of packs) {
+
         await startDownload(p.owner, p.id, p.version)
     }
-    
+
+    setStatus(
+        <div>
+            <h2>Done downloading packs</h2>
+        </div>
+    )
+
     bothName = packs.length === 1 ? `${packs[0].id}-both.zip` : `packs-both.zip`
     incrementDownloads()
-    
-    if (datapacks.length > 0) {
-        const jarLink = (await firebaseApp.database().ref(`meta/vanilla/${gameVersion.replace(/[.]+/g, '_')}`).get()).val()
-        const jar = await fetchFile(jarLink);
-        if (jar != null) {
-            console.log(jar);
-            const dpb = new WeldDatapackBuilder(gameVersion)
 
-            const blob = await generateFinal(dpb, datapacks)
-            const name = packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip'
-            if (auto && !(both && resourcepacks.length > 0)) saveAs(blob, name)
-            else dpBlob = [name, blob]
-        }
+    
+    setStatus(
+        <div>
+            <h2>Incremented download counts</h2>
+        </div>
+    )
+
+
+    if (datapacks.length > 0) {
+        // const jarLink = (await firebaseApp.database().ref(`meta/vanilla/${gameVersion.replace(/[.]+/g, '_')}`).get()).val()
+        // const jar = await fetchFile(jarLink);
+        // if (jar != null) {
+        //     console.log(jar);
+        const dpb = new WeldDatapackBuilder(gameVersion)
+
+            
+        setStatus(
+            <div>
+                <h1>Starting to merge datapacks</h1>
+            </div>
+        )
+
+        const blob = await generateFinal(dpb, datapacks)
+        const name = packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip'
+        if (auto && !(both && resourcepacks.length > 0)) saveAs(blob, name)
+        else dpBlob = [name, blob]
+
+            
+        setStatus(
+            <div>
+                <h1>Finished merging datapacks</h1>
+            </div>
+        )
+
+        // }
     }
     if (resourcepacks.length > 0) {
+
+                    
+        setStatus(
+            <div>
+                <h1>Started to merge resourcepacks</h1>
+            </div>
+        )
+
         const rpb = new DefaultResourcepackBuilder();
 
         const blob = await generateFinal(rpb, resourcepacks)
         const name = packs.length === 1 ? `${packs[0].id}-resourcepack.zip` : 'resourcepack.zip'
         if (auto && !(both && datapacks.length > 0)) saveAs(blob, name)
         else rpBlob = [name, blob]
+
+                    
+        setStatus(
+            <div>
+                <h1>Finished merging resourcepacks</h1>
+            </div>
+        )
     }
     if (auto && both) {
         downloadZip();
@@ -188,11 +239,11 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
     callback()
 }
 
-
+let [status, setStatus] = [<></>, {} as Dispatch<SetStateAction<JSX.Element>>]
 
 function Download(props: any) {
     // const { owner, id, version }: {owner: string, id:string, version:string} = useParams()
-    const [status, setStatus] = useState(<div className="flex items-center flex-col">
+    [status, setStatus] = useState(<div className="flex items-center flex-col">
         <h1>Downloading packs!</h1>
         <h2>This may take a few seconds!</h2>
     </div>)
