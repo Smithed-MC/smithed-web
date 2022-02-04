@@ -43,10 +43,10 @@ async function getPackData(uid: string, id: string) {
 // }
 async function getVersionData(pack: any, version?: string): Promise<any> {
     var versionData
-    console.log(version)
-    console.log(pack.versions)
+    // console.log(version)
+    // console.log(pack.versions)
     if (version != null && version !== '' && pack.versions.find((v: any) => v.name === version) != null) {
-        console.log('did we make it')
+        // console.log('did we make it')
         versionData = pack.versions.find((v: any) => v.name === version)
     } else {
         let versions: { name: string, supports: string[] }[] = pack.versions;
@@ -74,23 +74,23 @@ async function fetchFile(url: string): Promise<Buffer | null> {
             throw new Error(`Error while downloading pack! ${resp.json()}`)
         }
     } catch (e: any) {
-        console.log(e)
+        // console.log(e)
         return null;
     }
 }
 
 async function downloadPack(entry: any, id: string, version?: string) {
     const pack = await getPackData(entry["owner"], id);
-    console.log('made it ')
-    console.log(pack)
+    // console.log('made it ')
+    // console.log(pack)
 
     const versionData = await getVersionData(pack, version)
-    console.log(versionData)
+    // console.log(versionData)
     if (versionData != null) {
         if (versionData["downloads"] != null) {
             const { datapack, resourcepack }: { datapack: string, resourcepack: string } = versionData["downloads"]
-            console.log(datapack)
-            console.log(resourcepack)
+            // console.log(datapack)
+            // console.log(resourcepack)
             if (datapack !== undefined && datapack !== '') {
                 const zip = await fetchFile(datapack)
                 if (zip != null)
@@ -105,7 +105,7 @@ async function downloadPack(entry: any, id: string, version?: string) {
 
         if (versionData["dependencies"] != null && versionData["dependencies"].length > 0) {
             for (var d of versionData["dependencies"]) {
-                console.log(d)
+                // console.log(d)
                 const [owner, id] = d.id.split(':')
                 const version = d.version
                 await startDownload(owner, id, version)
@@ -131,11 +131,14 @@ async function startDownload(owner: string, id: string, version?: string) {
 }
 
 async function generateFinal(builder: PackBuilder, packs: [string, Buffer][]) {
+    console.log('loading')
     await builder.loadBuffers(packs)
+    setStatus(<div><h1>Building</h1></div>)
     const r = await builder.build()
-
-    const blob = await r.zip.generateAsync({ type: 'blob' })
-
+    console.log('generating')
+    console.log(r.zip)
+    const blob = await r.zip.generateAsync({ type: 'blob' }, (m) => {setStatus(<div><h1>Zipping: {m.percent.toPrecision(3)}%</h1></div>)})
+    console.log(blob)
     return blob
 }
 
@@ -200,7 +203,7 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
         const name = packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip'
         if (auto && !(both && resourcepacks.length > 0)) saveAs(blob, name)
         else dpBlob = [name, blob]
-
+        console.log('done')
             
         setStatus(
             <div>
@@ -252,9 +255,9 @@ function Download(props: any) {
     const [auto] = useQueryParam('auto', withDefault(BooleanParam, false))
     const [both] = useQueryParam('both', withDefault(BooleanParam, true))
 
-    console.log(auto)
-    console.log(version)
-    console.log(packs)
+    // console.log(auto)
+    // console.log(version)
+    // console.log(packs)
 
     const packStringToObject = useCallback((pack: string) => {
         const owner = pack.split(':')[0]
@@ -286,6 +289,7 @@ function Download(props: any) {
             let completeText = []
             for (let p of packIds)
                 completeText.push(<label className="text-2xl">{p}</label>)
+                console.log('done')
             setStatus(
                 <div className="flex flex-col items-center w-1/4">
                     {!auto && <div className="flex flex-col items-center w-full">
