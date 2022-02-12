@@ -49,8 +49,11 @@ const downloadMeta = async (req) => {
 
 const toolsMeta = async (req) => {
     const tool = req.params.tool
-
-    if (tool === 'shaped-recipe') return {
+    if(tool === undefined) return {
+        title: "Tools",
+        description: "Collection of tools for working with Smithed libraries"
+    }
+    else if (tool === 'shaped-recipe') return {
         title: "Shaped Recipe Generator",
         description: "For use with Smithed Crafter",
         image: ""
@@ -93,6 +96,7 @@ const pages = {
     "/libraries": librariesMeta,
     "/download": defaultMeta,
     "/discord": discordMeta,
+    "/tools": toolsMeta,
     "/tools/:tool": toolsMeta,
     "/packs/:owner/:id": packsMeta,
 }
