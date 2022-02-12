@@ -263,7 +263,7 @@ function Download(props: any) {
         const owner = pack.split(':')[0]
         const splitAt = pack.split(':')[1].split('@')
         const id = splitAt[0]
-        const version = splitAt.length > 1 && splitAt[1] !== '' ? splitAt[1] : undefined;
+        const version = splitAt.length > 1 && splitAt[1] !== '' ? decodeURIComponent(splitAt[1]) : undefined;
         return { id: id, owner: owner, version: version }
     }, [])
 
