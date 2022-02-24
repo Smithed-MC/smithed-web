@@ -1,4 +1,4 @@
-import { WeldDatapackBuilder } from "../weld/datapack";
+import { WeldDatapackBuilder } from "smithed-weld/out/datapack";
 import DefaultResourcepackBuilder from "slimeball/out/resourcepack";
 import JSZip from "jszip";
 import { PackBuilder } from "slimeball/out/util";
