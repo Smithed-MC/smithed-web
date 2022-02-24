@@ -24,6 +24,7 @@ export class WeldDatapackBuilder extends DefaultDatapackBuilder {
     async mergeViaWeld(fileData: FileData, resolvedData: string[]) {
         let baseTable = null
         if(fileData.namespace === 'minecraft') {
+            this.onUpdate('Fetch vanilla loot table')
             if(cachedData[this.version] !== undefined && cachedData[this.version][fileData.path] !== undefined) {
                 baseTable = cachedData[this.version][fileData.path]
             }
@@ -35,6 +36,7 @@ export class WeldDatapackBuilder extends DefaultDatapackBuilder {
             }
         }
 
+        this.onUpdate('Load loot tables')
         let data: {}[] = [];
         for(let d of resolvedData) {
             const parsedData = parseData(d);
@@ -54,6 +56,7 @@ export class WeldDatapackBuilder extends DefaultDatapackBuilder {
             baseTable = data.shift()
         }
 
+        this.onUpdate('Apply rules')
         let newTable = this.applyRules(baseTable, data);
         await this.finalZip.add(fileData.path, new TextReader(JSON.stringify(newTable, null, 2)));
         this.fileMap[fileData.namespace][fileData.category][fileData.path] = [];

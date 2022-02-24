@@ -139,7 +139,17 @@ async function generateFinal(builder: PackBuilder, packs: [string, Buffer][], st
         <h2>{state ? state : ''}</h2>
     </div>)
     console.log('done loading\nbuilding')
-    const r = await builder.build()
+    const r = await builder.build((m) => {
+        const lines = m.split('\n', 3)
+        const header = lines[0]
+        const subtitle = lines.length > 1 ? lines[1] : ''
+        const misc = lines.length > 2 ? lines[2] : ''
+        setStatus(<div className="flex flex-col items-center">
+            <h1>{header}</h1>
+            <h2>{subtitle}</h2>
+            <p>{misc}</p>
+        </div>)
+    })
     console.log('done building')
 
     let lastPercent = 0
