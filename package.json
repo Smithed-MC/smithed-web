@@ -31,6 +31,7 @@
     "jszip": "^3.7.1",
     "jszip-utils": "^0.1.0",
     "latest-semver": "^4.0.0",
+    "linq-es5": "^1.11.15",
     "markdown-to-jsx": "^7.1.6",
     "path-to-regexp": "^6.2.0",
     "postcss-loader": "^4.0.3",

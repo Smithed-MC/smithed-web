@@ -135,15 +135,18 @@ async function generateFinal(builder: PackBuilder, packs: [string, Buffer][]) {
     console.log('loading')
     await builder.loadBuffers(packs)
     setStatus(<div><h1>Building</h1></div>)
+    console.log('done loading\nbuilding')
     const r = await builder.build()
-    setStatus(<div><h1>Zipping</h1></div>)
+    console.log('done building')
 
+    let lastPercent = 0
     const blob = await r.zip.close(undefined, {'onprogress': (p, total, entry) => {
-        const percent = (p*100/total).toPrecision(3)
-        console.log(percent)
-        setStatus(<div><h1>Zipping: {percent}%</h1></div>)
+        const percent = Math.ceil(p*100/total)
+        if(lastPercent < percent) {
+            console.log(percent)
+            lastPercent = percent
+        }
     }})
-    setStatus(<div><h1>Zipping</h1><h2>Done</h2></div>)
     console.log(blob)
     return blob
 }
