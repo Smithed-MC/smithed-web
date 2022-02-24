@@ -121,32 +121,37 @@ async function startDownload(owner: string, id: string, version?: string) {
     packIds.push(owner + ':' + id)
 
     setStatus
-    (<div>
-        <h1>Downloading pack:</h1>
-        <h2>{owner}:{id}</h2>
-    </div>)
+        (<div>
+            <h1>Downloading pack:</h1>
+            <h2>{owner}:{id}</h2>
+        </div>)
 
     if (dbEntry != null) {
         await downloadPack(dbEntry, id, version)
     }
 }
 
-async function generateFinal(builder: PackBuilder, packs: [string, Buffer][]) {
+async function generateFinal(builder: PackBuilder, packs: [string, Buffer][], state?: string) {
     console.log('loading')
     await builder.loadBuffers(packs)
-    setStatus(<div><h1>Building</h1></div>)
+    setStatus(<div className="flex flex-col items-center">
+        <h1>Building</h1>
+        <h2>{state ? state : ''}</h2>
+    </div>)
     console.log('done loading\nbuilding')
     const r = await builder.build()
     console.log('done building')
 
     let lastPercent = 0
-    const blob = await r.zip.close(undefined, {'onprogress': (p, total, entry) => {
-        const percent = Math.ceil(p*100/total)
-        if(lastPercent < percent) {
-            console.log(percent)
-            lastPercent = percent
+    const blob = await r.zip.close(undefined, {
+        'onprogress': (p, total, entry) => {
+            const percent = Math.ceil(p * 100 / total)
+            if (lastPercent < percent) {
+                console.log(percent)
+                lastPercent = percent
+            }
         }
-    }})
+    })
     console.log(blob)
     return blob
 }
@@ -186,7 +191,7 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
     bothName = packs.length === 1 ? `${packs[0].id}-both.zip` : `packs-both.zip`
     incrementDownloads()
 
-    
+
     setStatus(
         <div>
             <h2>Incremented download counts</h2>
@@ -201,19 +206,19 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
         //     console.log(jar);
         const dpb = new WeldDatapackBuilder(gameVersion)
 
-            
+
         setStatus(
             <div>
                 <h1>Starting to merge datapacks</h1>
             </div>
         )
 
-        const blob = await generateFinal(dpb, datapacks)
+        const blob = await generateFinal(dpb, datapacks, 'Datapack')
         const name = packs.length === 1 ? `${packs[0].id}-datapack.zip` : 'datapacks.zip'
         if (auto && !(both && resourcepacks.length > 0)) saveAs(blob, name)
         else dpBlob = [name, blob]
         console.log('done')
-            
+
         setStatus(
             <div>
                 <h1>Finished merging datapacks</h1>
@@ -224,7 +229,7 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
     }
     if (resourcepacks.length > 0) {
 
-                    
+
         setStatus(
             <div>
                 <h1>Started to merge resourcepacks</h1>
@@ -233,12 +238,12 @@ export async function downloadAndMerge(packs: { id: string, owner: string, versi
 
         const rpb = new DefaultResourcepackBuilder();
 
-        const blob = await generateFinal(rpb, resourcepacks)
+        const blob = await generateFinal(rpb, resourcepacks, 'Resourcepack')
         const name = packs.length === 1 ? `${packs[0].id}-resourcepack.zip` : 'resourcepack.zip'
         if (auto && !(both && datapacks.length > 0)) saveAs(blob, name)
         else rpBlob = [name, blob]
 
-                    
+
         setStatus(
             <div>
                 <h1>Finished merging resourcepacks</h1>
@@ -298,7 +303,7 @@ function Download(props: any) {
             let completeText = []
             for (let p of packIds)
                 completeText.push(<label className="text-2xl">{p}</label>)
-                console.log('done')
+            console.log('done')
             setStatus(
                 <div className="flex flex-col items-center w-1/4">
                     {!auto && <div className="flex flex-col items-center w-full">
