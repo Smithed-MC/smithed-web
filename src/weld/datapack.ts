@@ -4,6 +4,7 @@ import JSZip from 'jszip'
 import { MetaData } from "./metadata";
 import { asEnumerable } from "linq-es5";
 import { Rule, TargetSourceRule } from "./rules";
+import { TextReader } from "@zip.js/zip.js";
 const fetch = require('node-fetch')
 
 const weldCategories = ['loot_tables','predicates','item_modifiers','dimension','dimension_type','worldgen','recipes']
@@ -54,7 +55,7 @@ export class WeldDatapackBuilder extends DefaultDatapackBuilder {
         }
 
         let newTable = this.applyRules(baseTable, data);
-        this.finalZip.file(fileData.path, JSON.stringify(newTable, null, 2));
+        await this.finalZip.add(fileData.path, new TextReader(JSON.stringify(newTable, null, 2)));
         this.fileMap[fileData.namespace][fileData.category][fileData.path] = [];
     }
 
@@ -94,12 +95,12 @@ export class WeldDatapackBuilder extends DefaultDatapackBuilder {
             else if (weldCategories.includes(fileData.category)) {
                 await this.mergeViaWeld(fileData, resolvedData);
             } else {
-                this.finalZip.file(fileData.path, resolvedData[0]);
+                await this.finalZip.add(fileData.path, new TextReader(resolvedData[0]));
             }
         }
 
         const onFailure = (resolvedData: string[]) => {
-            this.finalZip.file(fileData.path, resolvedData[0]);
+            this.finalZip.add(fileData.path, new TextReader(resolvedData[0]));
             this.fileMap[fileData.namespace][fileData.category][fileData.path] = [];
         }
         await this.ifAnyDifferent(fileData, occurences, onSuccess, onFailure)

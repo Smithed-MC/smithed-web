@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback, SetStateAction, Dispatch } from "reac
 import { AppHeader } from "../App";
 import { ArrayParam, BooleanParam, StringParam, useQueryParam, withDefault } from "use-query-params";
 import { saveAs } from 'file-saver'
+import { BlobReader, BlobWriter, ZipWriter } from "@zip.js/zip.js";
 
 let datapacks: [string, Buffer][] = []
 let resourcepacks: [string, Buffer][] = []
@@ -135,9 +136,14 @@ async function generateFinal(builder: PackBuilder, packs: [string, Buffer][]) {
     await builder.loadBuffers(packs)
     setStatus(<div><h1>Building</h1></div>)
     const r = await builder.build()
-    console.log('generating')
-    console.log(r.zip)
-    const blob = await r.zip.generateAsync({ type: 'blob' }, (m) => {setStatus(<div><h1>Zipping: {m.percent.toPrecision(3)}%</h1></div>)})
+    setStatus(<div><h1>Zipping</h1></div>)
+
+    const blob = await r.zip.close(undefined, {'onprogress': (p, total, entry) => {
+        const percent = (p*100/total).toPrecision(3)
+        console.log(percent)
+        setStatus(<div><h1>Zipping: {percent}%</h1></div>)
+    }})
+    setStatus(<div><h1>Zipping</h1><h2>Done</h2></div>)
     console.log(blob)
     return blob
 }
@@ -148,11 +154,11 @@ function incrementDownloads() {
 
 let bothName = ''
 async function downloadZip() {
-    const final = new JSZip()
-    final.file(rpBlob[0], rpBlob[1])
-    final.file(dpBlob[0], dpBlob[1])
+    const final = new ZipWriter(new BlobWriter("application/zip"))
+    await final.add(rpBlob[0], new BlobReader(rpBlob[1]))
+    await final.add(dpBlob[0], new BlobReader(dpBlob[1]))
 
-    saveAs(await final.generateAsync({ type: 'blob' }), bothName)
+    saveAs(await final.close(), bothName)
 }
 
 export async function downloadAndMerge(packs: { id: string, owner: string, version: string | undefined }[], auto: boolean, both: boolean, callback: () => void) {
