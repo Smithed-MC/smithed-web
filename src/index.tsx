@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { palette } from './Palette';
-import App from './App';
+import App, { AppHeader } from './App';
 import styled from 'styled-components';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom'
@@ -10,7 +10,7 @@ import { Route } from 'react-router'
 import Download from './subpages/Download';
 import Discord from './subpages/Discord';
 import Images from './subpages/Images';
-import Packs from './subpages/Packs';
+import Packs from './shared/Packs';
 import Libraries from './subpages/Libraries';
 import Tools from './subpages/Tools';
 import { QueryParamProvider } from 'use-query-params';
@@ -78,7 +78,10 @@ const app = (
             <Route path='/images' component={Images} />
             <Route path='/libraries' component={Libraries} />
             <Route path='/tools' component={Tools} />
-            <Route path='/packs/:owner/:id' component={Packs} />
+            <Route path='/packs/:owner/:id'>
+              <AppHeader hideSubtitle={true} />
+              <Packs browser={true}/>
+            </Route>
             <Route path='/download' component={Download} />
             <Route exact path='/' component={App} />
             <meta/>
