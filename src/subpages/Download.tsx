@@ -35,7 +35,7 @@ function Download(props: any) {
             if (version != null && version !== '')
                 var gameVersion = version
             else
-                var gameVersion = '1.18.1'
+                var gameVersion = '1.18.2'
 
             let finalPacks: { id: string, owner: string, version?: string }[] = []
             if (packs == null || packs.length === 0) {
