@@ -5,7 +5,7 @@ import PackDownloader from "../shared/PackDownload";
 import { ZipWriter, BlobWriter, BlobReader } from "@zip.js/zip.js";
 import saveAs from "file-saver";
 
-let subtitle = ''
+let oldSubtitle = ''
 function Download(props: any) {
     // const { owner, id, version }: {owner: string, id:string, version:string} = useParams()
     const [status, setStatus] = useState(<div className="flex items-center flex-col">
@@ -60,7 +60,14 @@ function Download(props: any) {
                 // if(spam) return;
                 const lines = m.split('\n', 3)
                 const header = lines[0]
-                const subtitle = lines.length > 1 ? lines[1].substring(0, lines[1].length < 50 ? lines[1].length : 50) : ''
+                let subtitle = lines.length > 1 ? lines[1] : ''
+                if(spam && lines[1].includes('/')) {
+                    const parts = lines[1].split('/').slice(1)
+                    subtitle = `${parts[0]}:${parts.slice(1, parts.length <= 5 ? undefined : 3).join('/')}`
+                    if(subtitle.length > 30) subtitle = subtitle.substring(0, 30) + '...'
+                    if(subtitle === oldSubtitle) return
+                    oldSubtitle = subtitle
+                }
                 const misc = lines.length > 2 ? lines[2] : ''
                 setStatus(<div className="flex flex-col items-center">
                     <h1>{header}</h1>
