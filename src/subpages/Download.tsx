@@ -5,7 +5,7 @@ import PackDownloader from "../shared/PackDownload";
 import { ZipWriter, BlobWriter, BlobReader } from "@zip.js/zip.js";
 import saveAs from "file-saver";
 
-
+let subtitle = ''
 function Download(props: any) {
     // const { owner, id, version }: {owner: string, id:string, version:string} = useParams()
     const [status, setStatus] = useState(<div className="flex items-center flex-col">
@@ -56,15 +56,16 @@ function Download(props: any) {
                 saveAs(await final.close(), finalPacks.length === 1 ? `${finalPacks[0].id}-both.zip` : 'packs-both.zip')
             }
 
-            await (new PackDownloader((m: string) => {
+            await (new PackDownloader((m: string, spam?: boolean) => {
+                // if(spam) return;
                 const lines = m.split('\n', 3)
                 const header = lines[0]
-                const subtitle = lines.length > 1 ? lines[1] : ''
+                const subtitle = lines.length > 1 ? lines[1].substring(0, lines[1].length < 50 ? lines[1].length : 50) : ''
                 const misc = lines.length > 2 ? lines[2] : ''
-                setStatus(<div className="flex flex-col items-center" >
-                    <h1>{header} </h1>
-                    < h2 > {subtitle} </h2>
-                    < p > {misc} </p>
+                setStatus(<div className="flex flex-col items-center">
+                    <h1>{header}</h1>
+                    <h2>{subtitle}</h2>
+                    <p>{misc}</p>
                 </div>)
             }, gameVersion).downloadAndMerge(finalPacks, (dpBlob, rpBlob, packIds) => {
                 if (auto) {
