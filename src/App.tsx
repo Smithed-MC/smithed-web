@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { palette } from './Palette';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components'
 import { discordUrl } from './subpages/Discord';
 import "animate.css/animate.min.css";
 import ScrollAnimation from 'react-animate-on-scroll';
 import PackGallery, { GalleryImage } from './components/Gallery';
 import { useHistory } from 'react-router';
+import { registeredPalettes, setPalette } from './shared/Palette';
+import { ReactComponent as PaletteIcon } from './icons/color-palette.svg'
+import Cookies from 'js-cookie';
 
 const DownloadButton = styled.button`
   width: 148px;
@@ -67,18 +69,37 @@ const downloadNightly = () => {
 
 const HeaderContainer = styled.div`
   text-align: center;
-  background-color: ${palette.darkAccent};
+  background-color: var(--darkAccent);
   width: 100%;
 `
 
 
 export function AppHeader(props: any) {
   const history = useHistory()
+  const paletteSelect = useRef<HTMLSelectElement>(null)
   return (
     <HeaderContainer id="smithedHeader">
-      <h1 onClick={() => { history.push('/') }} className='text-white hover:text-gray-300 cursor-pointer' style={{ marginTop: '-8px', marginBottom: '-8px' }}>{'<SMITHED/>'}</h1>
+      <div className='flex flex-row justify-center items-center w-full'>
+        <h1 onClick={() => { history.push('/') }} className='text-white hover:text-gray-300 cursor-pointer' style={{ marginTop: '-8px', marginBottom: '-8px' }}>{'<SMITHED/>'}</h1>
+        <PaletteIcon className={'hover:brightness-75 active:brightness-[60%] w-8 h-8 absolute right-0 mr-2'} onClick={() => {
+          let ids = []
+          console.log(registeredPalettes)
+          for(let p in registeredPalettes) {
+            ids.push(p);
+          }
+
+          const palette = Cookies.get('palette') !== undefined ? Cookies.get('palette') : 'defaultDark'
+          console.log(palette)
+          if(palette === undefined) return;
+
+          const nextPaletteIdx = ids.indexOf(palette) + 1 % ids.length
+
+          setPalette(registeredPalettes[ids[nextPaletteIdx]])
+          Cookies.set('palette', ids[nextPaletteIdx])
+        }}/>
+      </div>
       <h3 style={{ marginTop: -16 }} hidden={props.hideSubtitle}>{'{Datapack Launcher}'}</h3>
-      <div style={{ backgroundColor: palette.lightAccent, height: 6 }} />
+      <div className='bg-lightAccent h-[6px]' />
     </HeaderContainer>
   )
 }
@@ -147,7 +168,7 @@ function AppBody() {
         <PackGallery scrollSpeed={5000} images={galleryImages} />
       </CategoryDiv>
       <CategoryDiv>
-        <h3 style={{ color: palette.text }}>Links</h3>
+        <h3 className='text-text'>Links</h3>
         <div style={{ display: 'flex', gap: 8 }}>
           <DownloadButton onClick={() => window.open('https://wiki.smithed.dev/')}>Wiki</DownloadButton>
           <DownloadButton onClick={() => window.open(discordUrl)} style={{ backgroundColor: '#5662F6' }}>Discord</DownloadButton>
@@ -156,7 +177,7 @@ function AppBody() {
       </CategoryDiv>
       <br />
       <CategoryDiv>
-        <h3 style={{ color: palette.text }}>Download</h3>
+        <h3 className='text-text'>Download</h3>
         <div style={{ display: 'flex', gap: 8 }}>
           <DownloadButton onClick={downloadStable}>Stable</DownloadButton>
           <DownloadButton onClick={downloadNightly} style={{ backgroundColor: '#C274FF' }}>Nightly</DownloadButton>

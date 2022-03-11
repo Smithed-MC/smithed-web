@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App, { AppHeader } from './App';
@@ -13,7 +13,8 @@ import Packs from './shared/Packs';
 import Libraries from './subpages/Libraries';
 import Tools from './subpages/Tools';
 import { QueryParamProvider } from 'use-query-params';
-import palette from './shared/Palette';
+import palette, { registeredPalettes, setPalette } from './shared/Palette';
+import Cookies from 'js-cookie';
 
 const IndexContainer = styled.div`
   width: 100%;
@@ -25,16 +26,25 @@ const IndexContainer = styled.div`
   right:0px;
   bottom:0px;
   left:0px;
+
+  background-color: var(--lightBackground);
 `
 
-document.body.style.backgroundColor = palette.lightBackground;
-
 function PacksWrapper(props: any) {
-  const {owner, id} = useParams<{owner: string, id: string}>()
-  return <Packs browser={true} owner={owner} id={id}/>
+  const { owner, id } = useParams<{ owner: string, id: string }>()
+  return <Packs browser={true} owner={owner} id={id} />
 }
 
-const app = (
+function Index(props: any) {
+  useEffect(function OnSiteLoad() {
+    const paletteName = Cookies.get('palette')
+    console.log(paletteName)
+    if (paletteName !== undefined)
+      setPalette(registeredPalettes[paletteName])
+    console.log(palette)
+  }, [])
+
+  return (
     <React.StrictMode>
       <IndexContainer className='h-full'>
         <BrowserRouter>
@@ -45,19 +55,20 @@ const app = (
             <Route path='/tools' component={Tools} />
             <Route path='/packs/:owner/:id'>
               <AppHeader hideSubtitle={true} />
-              <PacksWrapper/>
+              <PacksWrapper />
             </Route>
             <Route path='/download' component={Download} />
             <Route exact path='/' component={App} />
-            <meta/>
+            <meta />
           </QueryParamProvider>
         </BrowserRouter>
       </IndexContainer>
     </React.StrictMode>
-)
+  )
+}
 
 ReactDOM.render(
-  app,
+  <Index />,
   document.getElementById('root')
 );
 

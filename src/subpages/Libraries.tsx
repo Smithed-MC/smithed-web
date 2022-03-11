@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { AppHeader } from "../App";
-import { palette } from "../Palette";
 import '../index.css'
 import Markdown from "markdown-to-jsx";
 import { MarkdownOptions } from "../shared/Markdown";

@@ -1,6 +1,5 @@
 import EventEmitter from "events";
 import React, { useEffect, useRef, useState } from "react";
-import { palette } from "../../Palette";
 
 export function validateId(value: string) {
     
@@ -57,7 +56,7 @@ function updateItemNbt(row: number, col: number, value: string) {
 
 function RecipeItem(props: any) {
     return (
-        <div className="rounded p-2 flex flex-col gap-2" style={{backgroundColor:palette.darkBackground,border:`1px solid gray`}}>
+        <div className="rounded p-2 flex flex-col gap-2 bg-darkBackground" style={{border:`1px solid gray`}}>
             <label>Item #{(props.rowNumber * 3) + props.colNumber + 1}</label>
             <input className="w-64 rounded p-1" style={{color:'black'}} placeholder={"ID/Tag"} onChange={(e)=>{updateItemId(props.rowNumber, props.colNumber, e.target.value)}}/>
             <textarea className="w-64 resize rounded p-1" style={{color:'black'}} placeholder={"NBT ex: {blah:1b}"} onChange={(e)=>{updateItemNbt(props.rowNumber, props.colNumber, e.target.value)}}/>

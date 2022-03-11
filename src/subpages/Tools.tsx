@@ -1,6 +1,5 @@
 import React from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
-import { palette } from "../Palette";
 import ShapedRecipe from "./tools/ShapedRecipe";
 import ShapelessRecipe from "./tools/ShapelessRecipe";
 
@@ -9,7 +8,7 @@ function Tools() {
     const match = useRouteMatch("/tools/")
     return (
         <div className="w-full h-full">
-            {match && <div className="h-8 flex" style={{backgroundColor:palette.darkAccent}}>
+            {match && <div className="h-8 flex bg-darkAccent">
                 <select style={{backgroundColor:'transparent',border:'none'}} name="tool-select" defaultValue={history.location.pathname.replace('/tools/', '')}onChange={(e)=>{
                     history.push('/tools/' + e.target.value)
                 }}>

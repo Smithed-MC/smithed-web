@@ -1,6 +1,5 @@
 import EventEmitter from "events";
 import React, { useEffect, useRef, useState } from "react";
-import { palette } from "../../Palette";
 import { validateId } from "./ShapedRecipe";
 
 let items: {id: string, tag: string, count: number}[] = [
@@ -45,7 +44,7 @@ function RecipeItem(props: any) {
     }, [setId, setTag, setCount, props.item.id, props.item.tag, props.item.count])
 
     return (
-        <div className="rounded p-2 flex flex-col gap-2" style={{backgroundColor:palette.darkBackground,border:`1px solid gray`}}>
+        <div className="rounded p-2 flex flex-col gap-2 bg-darkBackground" style={{border:`1px solid gray`}}>
             <div className="flex flex-row place-content-between w-full">
                 <label>Item #{props.index + 1}</label>
                 {/* <label className="hover:opacity-50" onClick={()=>{
