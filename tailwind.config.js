@@ -1,5 +1,11 @@
+function withOpacity(cssVariable) {
+  return ({ opacityValue }) => {
+      return `var(${cssVariable})`
+  }
+}
+
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
@@ -8,19 +14,29 @@ module.exports = {
         '480': '480px',
         '640': '640px'
       },
-      height: {
+      height: {  
         '180': '180px',
         '270': '270px',
         '360': '360px'
       },
       colors: {
         'light-accent': '#216BEA',
-        'dark-accent': '#1B48C4'
+        'dark-accent': '#1B48C4',
+        darkAccent: withOpacity('--darkAccent'),
+        lightAccent: withOpacity('--lightAccent'),
+        badAccent: withOpacity('--badAccent'),
+        darkBackground: withOpacity('--darkBackground'),
+        lightBackground: withOpacity('--lightBackground'),
+        text: withOpacity('--text'),
+        subText: withOpacity('--subText'),
+        titlebar: withOpacity('--titlebar'),
+        codeText: withOpacity('--codeText')
+      },
+      fontFamily: {
+        'disket': ['Disket'],
+        'inconsolata': ['Inconsolata']
       }
     },
-  },
-  fontFamily: {
-    'disket': ['Disket']
   },
   plugins: [],
 }

@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { palette } from './Palette';
 import App, { AppHeader } from './App';
 import styled from 'styled-components';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom'
-import { Route } from 'react-router'
+import { Route, useParams } from 'react-router'
 import Download from './subpages/Download';
 import Discord from './subpages/Discord';
 import Images from './subpages/Images';
@@ -14,7 +13,7 @@ import Packs from './shared/Packs';
 import Libraries from './subpages/Libraries';
 import Tools from './subpages/Tools';
 import { QueryParamProvider } from 'use-query-params';
-
+import palette from './shared/Palette';
 
 const IndexContainer = styled.div`
   width: 100%;
@@ -26,48 +25,14 @@ const IndexContainer = styled.div`
   right:0px;
   bottom:0px;
   left:0px;
-  
-
-  div {
-    font-family: Inconsolata;
-    color: ${palette.text};
-  }
-
-  h1 {
-    font-size: 3rem;
-    margin: 0px;
-    font-family: Disket-Bold;
-  }
-  h2 {
-    font-size: 2.25rem;
-    margin: 0px;
-    font-family: Disket-Bold;
-    color: ${palette.subText};
-  }
-  h3 {
-    font-size: 1.5rem;
-    margin: 0px;
-    font-family: Disket-Bold;
-    color: ${palette.subText};
-  }
-  button {
-    background-color: ${palette.lightAccent};
-
-    border: none;
-    color: ${palette.text};
-    font-family: Disket-Bold;
-
-    :hover {
-      filter: brightness(85%);
-    }
-    :active {
-      filter: brightness(60%);
-    }
-  }
-
 `
 
 document.body.style.backgroundColor = palette.lightBackground;
+
+function PacksWrapper(props: any) {
+  const {owner, id} = useParams<{owner: string, id: string}>()
+  return <Packs browser={true} owner={owner} id={id}/>
+}
 
 const app = (
     <React.StrictMode>
@@ -80,7 +45,7 @@ const app = (
             <Route path='/tools' component={Tools} />
             <Route path='/packs/:owner/:id'>
               <AppHeader hideSubtitle={true} />
-              <Packs browser={true}/>
+              <PacksWrapper/>
             </Route>
             <Route path='/download' component={Download} />
             <Route exact path='/' component={App} />

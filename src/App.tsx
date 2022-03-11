@@ -76,7 +76,7 @@ export function AppHeader(props: any) {
   const history = useHistory()
   return (
     <HeaderContainer id="smithedHeader">
-      <h1 onClick={()=>{history.push('/')}} className='text-white hover:text-gray-300 cursor-pointer' style={{marginTop:'-8px', marginBottom: '-8px'}}>{'<SMITHED/>'}</h1>
+      <h1 onClick={() => { history.push('/') }} className='text-white hover:text-gray-300 cursor-pointer' style={{ marginTop: '-8px', marginBottom: '-8px' }}>{'<SMITHED/>'}</h1>
       <h3 style={{ marginTop: -16 }} hidden={props.hideSubtitle}>{'{Datapack Launcher}'}</h3>
       <div style={{ backgroundColor: palette.lightAccent, height: 6 }} />
     </HeaderContainer>
@@ -114,20 +114,20 @@ const galleryImages: GalleryImage[] = [
     pack: '',
     name: 'Ocean Additions by Primalugly'
   },
-  
+
 ]
 
 function AppBody() {
   const history = useHistory();
   const [downloads, setDownloads] = useState(0)
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch('https://api.github.com/repos/TheNuclearNexus/smithed/releases').then((resp) => {
       resp.json().then((json) => {
         let downloadCount = 0
-        for(let r of json) {
-          for(let a of r["assets"]) {
-            if(a["content_type"].includes("application/"))
+        for (let r of json) {
+          for (let a of r["assets"]) {
+            if (a["content_type"].includes("application/"))
               downloadCount += a["download_count"]
           }
         }
@@ -138,35 +138,31 @@ function AppBody() {
 
   return (
     <BodyContainer>
-      <ScrollAnimation animateIn='animate__fadeInUp' delay={1250} animateOnce={true}>
-        <CategoryDiv>
-          <p className="p-2 sm:w-320 sm:p-0 md:w-480 lg:w-640" style={{ fontSize: 16 }}>
-            Smithed is the all-in-one datapack launcher!
-            <br />
-            Focusing on both the end-user and developer experience to make datapack distribution, compatibility, and usage easier then ever! Explore interesting combinations of your favorite content!
-          </p>
-          <PackGallery scrollSpeed={5000} images={galleryImages} />
-        </CategoryDiv>
-      </ScrollAnimation>
-      <ScrollAnimation animateIn='animate__fadeInUp' delay={1500} animateOnce={true}>
-        <CategoryDiv>
-          <h3 style={{ color: palette.text }}>Links</h3>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <DownloadButton onClick={() => window.open('https://wiki.smithed.dev/')}>Wiki</DownloadButton>
-            <DownloadButton onClick={() => window.open(discordUrl)} style={{ backgroundColor: '#5662F6' }}>Discord</DownloadButton>
-            <DownloadButton onClick={() => history.push('/libraries')}>Libraries</DownloadButton>
-          </div>
-        </CategoryDiv>
-        <br />
-        <CategoryDiv>
-          <h3 style={{ color: palette.text }}>Download</h3>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <DownloadButton onClick={downloadStable}>Stable</DownloadButton>
-            <DownloadButton onClick={downloadNightly} style={{ backgroundColor: '#C274FF' }}>Nightly</DownloadButton>
-          </div>
-          <label>Downloads: {downloads}</label>
-        </CategoryDiv>
-      </ScrollAnimation>
+      <CategoryDiv>
+        <p className="p-2 sm:w-320 sm:p-0 md:w-480 lg:w-640" style={{ fontSize: 16 }}>
+          Smithed is the all-in-one datapack launcher!
+          <br />
+          Focusing on both the end-user and developer experience to make datapack distribution, compatibility, and usage easier then ever! Explore interesting combinations of your favorite content!
+        </p>
+        <PackGallery scrollSpeed={5000} images={galleryImages} />
+      </CategoryDiv>
+      <CategoryDiv>
+        <h3 style={{ color: palette.text }}>Links</h3>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <DownloadButton onClick={() => window.open('https://wiki.smithed.dev/')}>Wiki</DownloadButton>
+          <DownloadButton onClick={() => window.open(discordUrl)} style={{ backgroundColor: '#5662F6' }}>Discord</DownloadButton>
+          <DownloadButton onClick={() => history.push('/libraries')}>Libraries</DownloadButton>
+        </div>
+      </CategoryDiv>
+      <br />
+      <CategoryDiv>
+        <h3 style={{ color: palette.text }}>Download</h3>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <DownloadButton onClick={downloadStable}>Stable</DownloadButton>
+          <DownloadButton onClick={downloadNightly} style={{ backgroundColor: '#C274FF' }}>Nightly</DownloadButton>
+        </div>
+        <label>Downloads: {downloads}</label>
+      </CategoryDiv>
     </BodyContainer>
   )
 }
@@ -180,9 +176,7 @@ const AppContainer = styled.div`
 function App() {
   return (
     <AppContainer>
-      <ScrollAnimation animateIn='animate__slideInDown' animateOnce={true} offset={0} duration={1}>
-        <AppHeader />
-      </ScrollAnimation>
+      <AppHeader />
       <br />
       <AppBody />
     </AppContainer>

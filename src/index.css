@@ -33,3 +33,37 @@ code {
   src: local('Inconsolata'),
        url('./fonts/Inconsolata.otf') format('opentype')
 }
+
+@layer base {
+  h1 {
+    font-size: 3rem;
+    margin: 0px;
+    font-family: Disket-Bold;
+    color: var(--text);
+  }
+  h2 {
+    font-size: 2.25rem;
+    margin: 0px;
+    font-family: Disket-Bold;
+    color: var(--subText);
+  }
+  h3 {
+    font-size: 1.5rem;
+    margin: 0px;
+    font-family: Disket-Bold;
+    color: var(--subText);
+  }
+  div {
+    color: var(--text);
+    font-family: Inconsolata;
+  }
+  button {
+    background-color: var(--lightAccent);
+
+    border: none;
+    color: var(--text);
+    font-family: Disket-Bold;
+
+    @apply hover:brightness-75 active:brightness-[60%];
+  }
+}
