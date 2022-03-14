@@ -80,7 +80,7 @@ export function AppHeader(props: any) {
   return (
     <HeaderContainer id="smithedHeader">
       <div className='flex flex-row justify-center items-center w-full'>
-        <h1 onClick={() => { history.push('/') }} className='text-white hover:text-gray-300 cursor-pointer' style={{ marginTop: '-8px', marginBottom: '-8px' }}>{'<SMITHED/>'}</h1>
+        <h1 onClick={() => { history.push('/') }} className='text-titlebar hover:text-gray-300 cursor-pointer' style={{ marginTop: '-8px', marginBottom: '-8px' }}>{'<SMITHED/>'}</h1>
         <PaletteIcon className={'hover:brightness-75 active:brightness-[60%] w-8 h-8 absolute right-0 mr-2'} onClick={() => {
           let ids = []
           console.log(registeredPalettes)
@@ -108,6 +108,7 @@ const BodyContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  background-color: var(--lightBackground);
 `
 const galleryImages: GalleryImage[] = [
   {

@@ -7,9 +7,17 @@ import { MarkdownOptions } from "../shared/Markdown";
 
 
 function formatId(id: string) {
+    if(id.match(/\S+:\S+/)) {
+        id = id.split(':')[1]
+    }
+
     const bits = id.split('-')
     bits.forEach((p, i, arr) => arr[i] = p.charAt(0).toUpperCase() + p.substring(1))
     return bits.join(' ')
+}
+
+const badgeColors: {[key:string]: string} = {
+    'core': 'lightAccent'
 }
 
 function LibraryPane(props: { pack: Package }) {
@@ -17,7 +25,7 @@ function LibraryPane(props: { pack: Package }) {
     const pack = props.pack
 
     const name = formatId(pack.id)
-    const slug = `${pack.version}@${pack.version}`
+    const slug = `${pack.id}@${pack.version}`
 
 
     return (
@@ -29,7 +37,7 @@ function LibraryPane(props: { pack: Package }) {
                     for (let b of pack.badges) {
                         elements.push(
                             <div>
-                                <label className='rounded-md bg-lightAccent p-1 h-auto text-sm font-[Inconsolata]'>{formatId(b)}</label>
+                                <label className={`rounded-md bg-${badgeColors[b] !== undefined ? badgeColors[b] : 'lightAccent'} p-1 h-auto text-sm text-titlebar font-[Inconsolata]`}>{formatId(b)}</label>
                             </div>
                         )
                     }
@@ -44,8 +52,15 @@ function LibraryPane(props: { pack: Package }) {
             <Markdown options={MarkdownOptions()} className="flex-grow text-center w-full bg-darkBackground rounded-md p-2">{pack.description}</Markdown>
             <br />
             <div className="flex flex-wrap gap-2 place-content-center">
-                <button className="w-32 h-8 text-xl" onClick={() => history.push('/download?pack=smithed:' + slug)}>Download</button>
-                <button className="w-32 h-8 text-xl" onClick={() => history.push('/packs/smithed/' + slug)}>View</button>
+                <button className="w-32 h-8 text-xl" onClick={() => history.push('/download?pack=' + (slug.match(/\S+:\S+/) ? slug : 'smithed:' + slug))}>Download</button>
+                <button className="w-32 h-8 text-xl" onClick={() => {history.push(
+                    '/packs/' + 
+                        (
+                            pack.id.match(/\S+:\S+/) ? 
+                                pack.id.replaceAll(':', '/') : 
+                                'smithed/' + pack.id
+                        )
+                    )}}>View</button>
                 {/* <button className="w-32 h-8 text-xl" onClick={() => window.open(props.source)}>Source</button> */}
                 {/* <button className="w-32 h-8 text-xl" onClick={() => window.open(props.docs)}>Docs</button> */}
             </div>

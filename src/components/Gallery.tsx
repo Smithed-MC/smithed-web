@@ -3,6 +3,7 @@ import "animate.css/animate.min.css";
 import styled from 'styled-components';
 import '../index.css'
 import { useHistory } from 'react-router';
+import { preProcessFile } from 'typescript';
 export interface GalleryImage {
     url: string,
     pack: string,
@@ -29,7 +30,7 @@ const PackImg = styled.img`
 
 
 function PackGallery(props: GalleryProps) {
-    const [imgIndex, setImgIndex] = useState(0)
+    const [imgIndex, setImgIndex] = useState(Math.floor(Math.random() * props.images.length))
     const history = useHistory()
     const text = useRef(null)
 
@@ -60,7 +61,7 @@ function PackGallery(props: GalleryProps) {
     return (
         <div className={'relative ' + imgClass} style={props.style}>
             <label className='absolute z-10 text-md m-2 px-2 md:text-lg lg:text-xl bottom-0 left-0' style={{backgroundColor:'rgba(0,0,0,0.75)'}} ref={text}>{img.name}</label>
-            <PackImg className={imgClass  + ' border-4 rounded-md border-darkAccent'} style={{ animationDelay: '0.2s' }} onClick={() => openPackView(img)} alt='Pack' src={img.url} onAnimationEnd={(e) => {
+            <PackImg className={imgClass  + ' border-4 rounded-md border-darkAccent'} onClick={() => openPackView(img)} alt='Pack' src={img.url} onAnimationEnd={(e) => {
                 let img = e.target as HTMLImageElement
                 img.className = imgClass
                 img.style.opacity = '100'

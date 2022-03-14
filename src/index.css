@@ -53,6 +53,9 @@ code {
     font-family: Disket-Bold;
     color: var(--subText);
   }
+  hr {
+    border-color: var(--text);
+  }
   div {
     color: var(--text);
     font-family: Inconsolata;
@@ -61,7 +64,7 @@ code {
     background-color: var(--lightAccent);
 
     border: none;
-    color: var(--text);
+    color: var(--titlebar);
     font-family: Disket-Bold;
 
     @apply hover:brightness-75 active:brightness-[60%];

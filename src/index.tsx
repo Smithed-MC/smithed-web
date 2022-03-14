@@ -18,7 +18,7 @@ import Cookies from 'js-cookie';
 
 const IndexContainer = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   margin: 0px;
 
   position:absolute;
@@ -46,20 +46,22 @@ function Index(props: any) {
 
   return (
     <React.StrictMode>
-      <IndexContainer className='h-full'>
+      <IndexContainer>
         <BrowserRouter>
           <QueryParamProvider ReactRouterRoute={Route}>
-            <Route path='/discord' component={Discord} />
-            <Route path='/images' component={Images} />
-            <Route path='/libraries' component={Libraries} />
-            <Route path='/tools' component={Tools} />
-            <Route path='/packs/:owner/:id'>
-              <AppHeader hideSubtitle={true} />
-              <PacksWrapper />
-            </Route>
-            <Route path='/download' component={Download} />
-            <Route exact path='/' component={App} />
-            <meta />
+            <div className='bg-lightBackground'>
+              <Route path='/discord' component={Discord} />
+              <Route path='/images' component={Images} />
+              <Route path='/libraries' component={Libraries} />
+              <Route path='/tools' component={Tools} />
+              <Route path='/packs/:owner/:id'>
+                <AppHeader hideSubtitle={true} />
+                <PacksWrapper />
+              </Route>
+              <Route path='/download' component={Download} />
+              <Route exact path='/' component={App} />
+              <meta />
+            </div>
           </QueryParamProvider>
         </BrowserRouter>
       </IndexContainer>
