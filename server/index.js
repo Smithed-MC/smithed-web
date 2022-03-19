@@ -38,7 +38,6 @@ fs.readFile(filePath, "utf8", (err, data) => {
         })
     }
 
-
     app.use(express.static(path.resolve(__dirname, "../build")))
 
     app.listen(PORT, () => {
