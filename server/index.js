@@ -28,6 +28,8 @@ fs.readFile(filePath, "utf8", (err, data) => {
 
                     index = index.replace(regex, meta[m])
                 }
+                if(!meta.includes('ogSiteName'))
+                    index = index.replace('__OGSITENAME__', '')
                 res.send(index)
             }
 
