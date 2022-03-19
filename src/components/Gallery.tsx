@@ -70,5 +70,4 @@ function PackGallery(props: GalleryProps) {
     )
 }
 
-
 export default PackGallery;
