@@ -23,6 +23,7 @@ fs.readFile(filePath, "utf8", (err, data) => {
             const updateMeta = meta => {
                 let index = data
                 for (let m in meta) {
+                    console.log(m)
                     const regex = new RegExp(`__${m.toUpperCase()}__`, 'g')
 
                     index = index.replace(regex, meta[m])

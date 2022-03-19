@@ -99,7 +99,7 @@ const pages = {
     "/discord": discordMeta,
     "/tools": toolsMeta,
     "/tools/:tool": toolsMeta,
-    "/packs/:owner/:id": packsMeta,
+    "/packs/:owner/:id([^.]+)": packsMeta,
 }
 
 module.exports = { pages }
