@@ -68,7 +68,7 @@ const toolsMeta = async (req) => {
 
 const packsMeta = async (req) => {
     const { owner, id } = req.params
-
+    console.log(owner, id)
     const packEntry = await database.ref(`packs/${owner}:${id}`).get()
 
     if (!packEntry.exists()) return { title: `${owner}:${id}`, description: "Unknown pack!", image: "" }
