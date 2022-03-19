@@ -14,13 +14,13 @@ fs.readFile(filePath, "utf8", (err, data) => {
     }
 
     for (let path in pages) {
-        if(path.startsWith('r')) {
+        if (path.startsWith('r')) {
             var regPath = new RegExp(path.substring(1), 'g')
             console.log(regPath)
         }
 
         app.get(regPath !== undefined ? regPath : path, (req, res) => {
-            pages[path](req).then(meta => {
+            const updateMeta = meta => {
                 let index = data
                 for (let m in meta) {
                     const regex = new RegExp(`__${m.toUpperCase()}__`, 'g')
@@ -28,7 +28,13 @@ fs.readFile(filePath, "utf8", (err, data) => {
                     index = index.replace(regex, meta[m])
                 }
                 res.send(index)
-            })
+            }
+
+            try {
+                pages[path](req).then(updateMeta)
+            } catch {
+                pages["/"](req).then(updateMeta)
+            }
         })
     }
 
