@@ -1,9 +1,6 @@
-[submodule "public/files"]
-	path = public/files
+[submodule "website/public/files"]
+	path = website/public/files
 	url = https://github.com/Smithed-MC/PublicResources
-[submodule "src/src/shared"]
-	path = src/src/shared
-	url = https://github.com/Smithed-MC/smithed-shared
-[submodule "src/shared"]
-	path = src/shared
+[submodule "website/src/shared"]
+	path = website/src/shared
 	url = https://github.com/Smithed-MC/smithed-shared

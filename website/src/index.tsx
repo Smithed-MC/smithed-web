@@ -12,7 +12,7 @@ import Images from './subpages/Images';
 import Packs from './shared/Packs';
 import Libraries from './subpages/Libraries';
 import Tools from './subpages/Tools';
-import { QueryParamProvider } from 'use-query-params';
+import { QueryParamProvider } from 'use-query-params'
 import palette, { registeredPalettes, setPalette } from './shared/Palette';
 import Cookies from 'js-cookie';
 
