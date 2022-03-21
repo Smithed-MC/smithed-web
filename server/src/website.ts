@@ -3,7 +3,7 @@ import { Response, Request } from "express-serve-static-core"
 import { ParsedQs } from 'qs'
 import * as fs from "fs";
 import path from "path";
-import initialize from './database.js';
+import initialize from './util/database.js';
 import { get, ref } from 'firebase/database';
 
 
@@ -62,7 +62,6 @@ const toolsMeta = async (req: Request): Promise<{ [key: string]: string | undefi
 
 const packsMeta = async (req: Request) => {
     const { owner, id } = req.params
-    console.log(owner, id)
     
     const database = await initialize()
     if(database === undefined) return defaultMeta(req)
@@ -112,7 +111,6 @@ export function register() {
             const updateMeta = (meta: { [key: string]: string | undefined }) => {
                 let index = data
                 for (let m in meta) {
-                    console.log(m)
                     const regex = new RegExp(`__${m.toUpperCase()}__`, 'g')
 
                     let content = meta[m]

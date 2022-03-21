@@ -3,7 +3,7 @@ import { ref, set as setDB, get as getDB, Database } from 'firebase/database'
 import { PackBuilder } from 'slimeball/out/util'
 import DefaultResourcepackBuilder from 'slimeball/out/resourcepack.js'
 import { WeldDatapackBuilder } from 'smithed-weld/out/datapack.js'
-import initialize from '../database.js'
+import initialize from '../util/database.js'
 import { BlobReader, BlobWriter, ZipWriter } from '@zip.js/zip.js'
 import Blob from 'blob-polyfill'
 import fetch from 'node-fetch'
@@ -34,12 +34,14 @@ export default class PackDownloader {
     private packIds: string[] = []
     private gameVersion: string = '1.18.1'
     private onStatus: (element: string, spam?: boolean) => void
+    private onError: (message: string) => void
 
     private dpBlob: [string, Blob | undefined] = ['', undefined]
     private rpBlob: [string, Blob | undefined] = ['', undefined]
     private database: Database
-    constructor(database: Database, onStatus: (message: string, spam?: boolean) => void, gameVersion?: string) {
+    constructor(database: Database, onStatus: (message: string, spam?: boolean) => void, onError: (message: string) => void, gameVersion?: string) {
         this.onStatus = onStatus
+        this.onError = onError
         this.database = database
         if (gameVersion) this.gameVersion = gameVersion
     }
@@ -86,7 +88,7 @@ export default class PackDownloader {
                     for (let s of v.supports)
                         if (!supports.includes(s)) supports.push(s)
 
-                throw new Error(`Valid version could not be found for pack '${pack.id}' on Minecraft Version ${this.gameVersion}!\n'${pack.id}' supports: ${supports.join(', ')}\nTry adding '&version=<gameVersion>' to resolve the issue!`)
+                this.onError(`Valid version could not be found for pack '${pack.id}' on Minecraft Version ${this.gameVersion}!\n'${pack.id}' supports: ${supports.join(', ')}\nTry adding '&version=<gameVersion>' to resolve the issue!`)
                 return null
             }
         }
@@ -177,7 +179,7 @@ export default class PackDownloader {
         return blob
     }
     private incrementDownloads() {
-        fetch(`https://vercel.smithed.dev/api/update-download?packs=${JSON.stringify(this.packIds.map(m => m.split('@')[0]))}`, { 'method': 'no-cors' })
+        fetch(`https://ovh.smithed.dev/api/increment-download?packs=${JSON.stringify(this.packIds.map(m => m.split('@')[0]))}`, { 'method': 'no-cors' })
     }
 
     public async getPacksHash(packs: { id: string, owner: string, version?: string }[]) {
@@ -262,24 +264,47 @@ export default class PackDownloader {
 const cacheDir = path.join(process.cwd(), 'cache')
 
 export async function handle(req: Request, res: Response) {
+    try {
+        processRequest(req, res)
+    } catch (e) {
+        console.log(e)
+        res.status(500).send(e)
+    }
+}
+
+async function processRequest(req: Request, res: Response) {
+    // Create the cache directory
     if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir)
+    // Validate request
     if (req.query.pack === undefined) { res.status(400).send('No packs added'); return }
 
 
     const mode = (req.query.mode as PackDownloadMode) || 'both'
     const version = req.query.version as string
+    
     let packs: PackQuery[] = []
+    
+    // Convert query into valid object
     if (typeof (req.query.pack) === 'string') packs = [mapQueryToObject(req.query.pack)]
-    if (req.query.pack instanceof Array) packs = (req.query.pack as string[]).map(mapQueryToObject)
+    else if (req.query.pack instanceof Array) packs = (req.query.pack as string[]).map(mapQueryToObject)
 
+    // Grab our database
     const db = await initialize()
     if (db === undefined) {
         res.status(500).send('FAILED TO INIT DATABASE')
         return
     }
-    const pd = new PackDownloader(db, m => (console.log(m)), version)
+
+    // Init the PackDownloader
+    const pd = new PackDownloader(db, m => (console.log(m)), (m) => {
+        if(!res.writableEnded) res.status(400).send(m)
+    }, version)
+
+    // Generate hash based on request packs and mode
     const cacheFile = await pd.getPacksHash(packs) + '-' + mode.charAt(0)
     console.log(cacheFile)
+
+    // Send cached file if it exists
     if (fs.existsSync(path.join(cacheDir, cacheFile))) {
         console.log('Sending cached file!')
         res.download(path.join(cacheDir, cacheFile), getFileName(packs.length, mode), undefined)
@@ -287,7 +312,6 @@ export async function handle(req: Request, res: Response) {
         console.log('Creating new file!')
         mergeNewData(packs, mode, version, res, pd, cacheFile)
     }
-
 }
 
 function getFileName(packCount: number, mode: PackDownloadMode) {
@@ -300,11 +324,10 @@ function getFileName(packCount: number, mode: PackDownloadMode) {
 }
 
 async function mergeNewData(packs: PackQuery[], mode: PackDownloadMode, version: string|undefined, res: Response, pd: PackDownloader, cacheFile: string) {
+    const completed = await pd.downloadAndMerge(packs, mode)
 
-
-    const downloadPromise = pd.downloadAndMerge(packs, mode)
-    downloadPromise.catch((e: Error) => res.status(400).send(e.message))
-    const completed = await downloadPromise
+    // Check if a response was already sent by the downloader
+    if(res.writableEnded) return
 
     if (mode === 'both') {
         await sendBoth(completed, res, cacheFile)
@@ -317,6 +340,8 @@ async function mergeNewData(packs: PackQuery[], mode: PackDownloadMode, version:
 
 async function sendBoth(completed: PackDownloadResult, res: Response, cacheFile: string) {
     const final = new ZipWriter(new BlobWriter("application/zip"))
+
+    // Combine rp and dp into one zip
     if (completed.rp[1])
         await final.add(completed.rp[0], new BlobReader(completed.rp[1]))
     if (completed.dp[1])
@@ -324,6 +349,7 @@ async function sendBoth(completed: PackDownloadResult, res: Response, cacheFile:
 
     const finalBlob: Blob = await final.close()
     const filePath = path.join(cacheDir, cacheFile)
+    // Save file to cache
     fs.writeFileSync(filePath, Buffer.from(await finalBlob.arrayBuffer()))
     res.download(filePath, 'packs.zip', undefined)
 }
@@ -331,6 +357,8 @@ async function sendBoth(completed: PackDownloadResult, res: Response, cacheFile:
 async function sendDatapack(completed: PackDownloadResult, res: Response, cacheFile: string) {
     const filePath = path.join(cacheDir, cacheFile)
     if(!completed.dp[1]) { res.status(500).send('Datapack \'Blob\' was undefined'); return }
+
+    // Save file to cache
     fs.writeFileSync(filePath, Buffer.from(await completed.dp[1].arrayBuffer()))
     res.download(filePath, 'datapacks.zip', undefined)
 }
@@ -338,6 +366,8 @@ async function sendDatapack(completed: PackDownloadResult, res: Response, cacheF
 async function sendResourcepack(completed: PackDownloadResult, res: Response, cacheFile: string) {
     const filePath = path.join(cacheDir, cacheFile)
     if(!completed.rp[1]) { res.status(500).send('Datapack \'Blob\' was undefined'); return }
+
+    // Save file to cache;
     fs.writeFileSync(filePath, Buffer.from(await completed.rp[1].arrayBuffer()))
     res.download(filePath, 'resourcepacks.zip', undefined)
 }
