@@ -1,6 +1,0 @@
-[submodule "website/public/files"]
-	path = website/public/files
-	url = https://github.com/Smithed-MC/PublicResources
-[submodule "website/src/shared"]
-	path = website/src/shared
-	url = https://github.com/Smithed-MC/smithed-shared
