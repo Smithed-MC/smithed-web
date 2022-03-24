@@ -97,7 +97,9 @@ export default class PackDownloader {
 
     private async fetchFile(url: string): Promise<Buffer | null> {
         try {
-            const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)
+            const apiUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+            const resp = await fetch(apiUrl)
+            console.log(apiUrl)
             if (resp.ok) {
                 const buffer = await resp.arrayBuffer()
                 return buffer as Buffer;
@@ -124,9 +126,12 @@ export default class PackDownloader {
                 // console.log(datapack)
                 // console.log(resourcepack)
                 if (datapack !== undefined && datapack !== '') {
+                    console.log(datapack)
                     const zip = await this.fetchFile(datapack)
                     if (zip != null)
                         this.datapacks.push([id, zip])
+                    else
+                        this.onError(`Invalid download ${datapack} for ${id}`)
                 }
                 if (resourcepack !== undefined && resourcepack !== '') {
                     const zip = await this.fetchFile(resourcepack)
