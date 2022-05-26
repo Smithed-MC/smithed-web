@@ -326,7 +326,7 @@ async function processRequest(req: Request, res: Response) {
         const packIds = JSON.parse(fs.readFileSync(cacheFilePath + '.json', 'utf8'))
         console.log(packIds)
         await incrementDownloads(db, packIds)
-        // res.download(cacheFilePath, getFileName(packs.length, mode), undefined)
+        res.download(cacheFilePath, getFileName(packs.length, mode), undefined)
     } else {
         console.log('Creating new file!')
         mergeNewData(packs, mode, version, res, pd, cacheFile)
