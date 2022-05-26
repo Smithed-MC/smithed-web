@@ -28,6 +28,13 @@ type PackDownloadResult = {
     ids: string[]
 }
 
+function incrementDownloads(packIds: string[]) {
+    const url = `https://smithed.dev/api/increment-download?packs=${JSON.stringify(packIds.map(m => m.split('@')[0]))}`
+    console.log(url)
+    fetch(url, { 'method': 'no-cors' })
+}
+
+
 export default class PackDownloader {
     private datapacks: [string, Buffer][] = []
     private resourcepacks: [string, Buffer][] = []
@@ -183,10 +190,6 @@ export default class PackDownloader {
         console.log(blob)
         return blob
     }
-    private incrementDownloads() {
-        fetch(`https://smithed.dev/api/increment-download?packs=${JSON.stringify(this.packIds.map(m => m.split('@')[0]))}`, { 'method': 'no-cors' })
-    }
-
     public async getPacksHash(packs: { id: string, owner: string, version?: string }[]) {
         const packIds = []
         for (const p of packs) {
@@ -223,7 +226,7 @@ export default class PackDownloader {
 
         this.onStatus(`Done downloading packs`)
 
-        this.incrementDownloads()
+        incrementDownloads(this.packIds)
 
 
         this.onStatus(`Incremented download counts`)
@@ -312,6 +315,7 @@ async function processRequest(req: Request, res: Response) {
     // Send cached file if it exists
     if (fs.existsSync(path.join(cacheDir, cacheFile))) {
         console.log('Sending cached file!')
+        incrementDownloads(packs.map(p => `${p.owner}:${p.id}`))
         res.download(path.join(cacheDir, cacheFile), getFileName(packs.length, mode), undefined)
     } else {
         console.log('Creating new file!')
