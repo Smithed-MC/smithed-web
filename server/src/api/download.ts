@@ -10,6 +10,8 @@ import fetch from 'node-fetch'
 import md5 from 'md5'
 import fs from 'fs'
 import path from 'path'
+import hash from 'object-hash'
+import { updateDownloads } from './incrementDownload.js'
 async function get(database: Database, path: string) {
     return await getDB(ref(database, path))
 }
@@ -28,10 +30,10 @@ type PackDownloadResult = {
     ids: string[]
 }
 
-function incrementDownloads(packIds: string[]) {
-    const url = `https://smithed.dev/api/increment-download?packs=${JSON.stringify(packIds.map(m => m.split('@')[0]))}`
-    console.log(url)
-    fetch(url, { 'method': 'no-cors' })
+let userHash = ''
+async function incrementDownloads(db: Database, packIds: string[]) {
+    console.log('update')
+    await updateDownloads(db, userHash, packIds.map(p => p.split('@')[0]))
 }
 
 
@@ -119,13 +121,13 @@ export default class PackDownloader {
         }
     }
 
-    private async downloadPack(entry: any, id: string, version?: string) {
+    private async downloadPack(entry: any, owner: string, id: string, version?: string) {
         const pack = await this.getPackData(entry["owner"], id);
         // console.log('made it ')
         // console.log(pack)
 
         const versionData = await this.getVersionData(pack, version)
-        this.packIds.push(id + '@' + versionData.name)
+        this.packIds.push(owner + ':' + id + '@' + versionData.name)
         // console.log(versionData)
         if (versionData != null) {
             if (versionData["downloads"] != null) {
@@ -165,7 +167,7 @@ export default class PackDownloader {
         this.onStatus(`Downloading pack:\n${owner}:${id}`)
 
         if (dbEntry != null) {
-            await this.downloadPack(dbEntry, id, version)
+            await this.downloadPack(dbEntry, owner, id, version)
         }
     }
 
@@ -226,7 +228,7 @@ export default class PackDownloader {
 
         this.onStatus(`Done downloading packs`)
 
-        incrementDownloads(this.packIds)
+        incrementDownloads(this.database, this.packIds)
 
 
         this.onStatus(`Incremented download counts`)
@@ -286,6 +288,11 @@ async function processRequest(req: Request, res: Response) {
     // Validate request
     if (req.query.pack === undefined) { res.status(400).send('No packs added'); return }
 
+    userHash = hash({
+        ip: req.headers['x-forwarded-for'],
+        user_agent: req.headers['user-agent']
+    })
+    console.log(userHash)
 
     const mode = (req.query.mode as PackDownloadMode) || 'both'
     const version = req.query.version as string
@@ -313,10 +320,13 @@ async function processRequest(req: Request, res: Response) {
     console.log(cacheFile)
 
     // Send cached file if it exists
-    if (fs.existsSync(path.join(cacheDir, cacheFile))) {
+    const cacheFilePath = path.join(cacheDir, cacheFile)
+    if (fs.existsSync(cacheFilePath)) {
         console.log('Sending cached file!')
-        incrementDownloads(packs.map(p => `${p.owner}:${p.id}`))
-        res.download(path.join(cacheDir, cacheFile), getFileName(packs.length, mode), undefined)
+        const packIds = JSON.parse(fs.readFileSync(cacheFilePath + '.json', 'utf8'))
+        console.log(packIds)
+        await incrementDownloads(db, packIds)
+        // res.download(cacheFilePath, getFileName(packs.length, mode), undefined)
     } else {
         console.log('Creating new file!')
         mergeNewData(packs, mode, version, res, pd, cacheFile)
@@ -360,6 +370,7 @@ async function sendBoth(completed: PackDownloadResult, res: Response, cacheFile:
     const filePath = path.join(cacheDir, cacheFile)
     // Save file to cache
     fs.writeFileSync(filePath, Buffer.from(await finalBlob.arrayBuffer()))
+    fs.writeFileSync(filePath + '.json', JSON.stringify(completed.ids))
     res.download(filePath, 'packs.zip', undefined)
 }
 
@@ -369,6 +380,7 @@ async function sendDatapack(completed: PackDownloadResult, res: Response, cacheF
 
     // Save file to cache
     fs.writeFileSync(filePath, Buffer.from(await completed.dp[1].arrayBuffer()))
+    fs.writeFileSync(filePath + '.json', JSON.stringify(completed.ids))
     res.download(filePath, 'datapacks.zip', undefined)
 }
 
@@ -378,6 +390,7 @@ async function sendResourcepack(completed: PackDownloadResult, res: Response, ca
 
     // Save file to cache;
     fs.writeFileSync(filePath, Buffer.from(await completed.rp[1].arrayBuffer()))
+    fs.writeFileSync(filePath + '.json', JSON.stringify(completed.ids))
     res.download(filePath, 'resourcepacks.zip', undefined)
 }
 
