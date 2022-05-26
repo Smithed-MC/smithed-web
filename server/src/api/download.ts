@@ -184,7 +184,7 @@ export default class PackDownloader {
         return blob
     }
     private incrementDownloads() {
-        fetch(`https://ovh.smithed.dev/api/increment-download?packs=${JSON.stringify(this.packIds.map(m => m.split('@')[0]))}`, { 'method': 'no-cors' })
+        fetch(`https://smithed.dev/api/increment-download?packs=${JSON.stringify(this.packIds.map(m => m.split('@')[0]))}`, { 'method': 'no-cors' })
     }
 
     public async getPacksHash(packs: { id: string, owner: string, version?: string }[]) {
