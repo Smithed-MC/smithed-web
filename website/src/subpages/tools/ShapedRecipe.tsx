@@ -110,7 +110,7 @@ function ShapedRecipe() {
         console.log('ran')
         const matchPredicate = (i: {id: string, tag?: string}, idx: number, list: any) => {return i.id === 'minecraft:air' || (i.id === '' && i.tag === '')}
 
-        let result = "execute store result score @s smd.data if entity @s[scores={smd.data=0}] "
+        let result = "execute store result score @s smithed.data if entity @s[scores={smithed.data=0}] "
 
         let ingredientConds: string[] = []
         let emptyConds: string[] = []
@@ -124,10 +124,10 @@ function ShapedRecipe() {
         }
 
         if(ingredientConds.length > 0) {
-            result += `if data storage smd:crafter root.temp{crafting_input:{${ingredientConds.join()}}} `
+            result += `if data storage smithed.crafter:input recipe{${ingredientConds.join()}} `
         }
         if(emptyConds.length > 0) {
-            result += `if data storage smd:crafter root.temp{crafting_input:{${emptyConds.join()}}} `
+            result += `if data storage smithed.crafter:input recipe{${emptyConds.join()}} `
         }
 
         result += `run ${outputCommand}`

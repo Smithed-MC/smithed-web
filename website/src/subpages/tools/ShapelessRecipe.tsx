@@ -95,7 +95,7 @@ function ShapelessRecipe() {
     const [itemDisplays, setItemDisplays] = useState([])
     const divHeading = useRef(null)
     const onChange = () => {
-        let result = "execute store result score @s smd.data if entity @s[scores={smd.data=0}] "
+        let result = "execute store result score @s smithed.data if entity @s[scores={smithed.data=0}] "
 
         let ingredientConds: string[] = []
         let displays = []
@@ -109,7 +109,7 @@ function ShapelessRecipe() {
         setItemDisplays(displays as never[])
 
         if(ingredientConds.length > 0) {
-            result += `if score count smd.data matches ${ingredientConds.length} if data storage smd:crafter root.temp{shapeless_crafting_input:[${ingredientConds.join()}]} `
+            result += `if score count smithed.data matches ${ingredientConds.length} if data storage smithed.crafter:input {recipe:[${ingredientConds.join()}]} `
         }
 
         result += `run ${outputCommand}`
