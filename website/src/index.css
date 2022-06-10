@@ -70,3 +70,6 @@ code {
     @apply hover:brightness-75 active:brightness-[60%];
   }
 }
+.hideOnSmithed {
+  display: none;
+}
