@@ -135,7 +135,6 @@ function ShapedRecipe() {
         setCommand(result)
     }
 
-    
     useEffect(() => {
         recipeEvents.addListener('update', onChange)
 
