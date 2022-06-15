@@ -41,7 +41,7 @@ export default class PackDownloader {
     private datapacks: [string, Buffer][] = []
     private resourcepacks: [string, Buffer][] = []
     private packIds: string[] = []
-    private gameVersion: string = '1.18.1'
+    private gameVersion: string = '1.19'
     private onStatus: (element: string, spam?: boolean) => void
     private onError: (message: string) => void
 
