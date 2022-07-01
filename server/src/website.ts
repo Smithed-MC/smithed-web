@@ -1,4 +1,4 @@
-import { app } from './main.js';
+import { frontendApp } from './main.js';
 import { Response, Request } from "express-serve-static-core"
 import { ParsedQs } from 'qs'
 import * as fs from "fs";
@@ -107,7 +107,7 @@ export function register() {
     const filePath = path.resolve(process.cwd(), "../website/build", "index.html");
     let data = fs.readFileSync(filePath, "utf8")
     for (let path in pages) {
-        app.get(path, (req: Request, res) => {
+        frontendApp.get(path, (req: Request, res) => {
             const updateMeta = (meta: { [key: string]: string | undefined }) => {
                 let index = data
                 for (let m in meta) {
