@@ -12,6 +12,7 @@ import fs from 'fs'
 import path from 'path'
 import hash from 'object-hash'
 import { updateDownloads } from './incrementDownload.js'
+import semver from 'semver'
 async function get(database: Database, path: string) {
     return await getDB(ref(database, path))
 }
@@ -90,7 +91,6 @@ export default class PackDownloader {
             versionData = pack.versions.find((v: any) => v.name === version)
         } else {
             let versions: { name: string, supports: string[], dependencies: any[] }[] = pack.versions.filter((v: any) => v.supports.includes(this.gameVersion));
-
             if (versions.length === 0) {
                 let supports: string[] = []
                 for (let v of versions)
@@ -100,6 +100,8 @@ export default class PackDownloader {
                 this.onError(`Valid version could not be found for pack '${pack.id}' on Minecraft Version ${this.gameVersion}!\n'${pack.id}' supports: ${supports.join(', ')}\nTry adding '&version=<gameVersion>' to resolve the issue!`)
                 return null
             }
+            versions.sort((a,b) => semver.gt(a.name, b.name) ? 1 : -1).reverse()
+            // console.log(versions)
             versionData = versions[0]
         }
         return versionData
