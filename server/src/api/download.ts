@@ -101,7 +101,8 @@ export default class PackDownloader {
                 return null
             }
             versions.sort((a,b) => semver.gt(a.name, b.name) ? 1 : -1).reverse()
-            // console.log(versions)
+            
+            console.log(versions)
             versionData = versions[0]
         }
         return versionData
