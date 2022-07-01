@@ -19,7 +19,7 @@ export function start() {
         console.log(`Website frontend listening on ${FRONT_PORT}`)
     })
 
-    backendApp.listen(backendApp, () => {
+    backendApp.listen(BACK_PORT, () => {
         console.log(`API backend listening on ${BACK_PORT}`)
     })
 }
