@@ -89,9 +89,9 @@ export default class PackDownloader {
             // console.log('did we make it')
             versionData = pack.versions.find((v: any) => v.name === version)
         } else {
-            let versions: { name: string, supports: string[], dependencies: any[] }[] = pack.versions;
-            versionData = versions.reverse().find((v) => v.supports.includes(this.gameVersion))
-            if (versionData === undefined) {
+            let versions: { name: string, supports: string[], dependencies: any[] }[] = pack.versions.filter((v: any) => v.supports.includes(this.gameVersion));
+
+            if (versions.length === 0) {
                 let supports: string[] = []
                 for (let v of versions)
                     for (let s of v.supports)
@@ -100,6 +100,7 @@ export default class PackDownloader {
                 this.onError(`Valid version could not be found for pack '${pack.id}' on Minecraft Version ${this.gameVersion}!\n'${pack.id}' supports: ${supports.join(', ')}\nTry adding '&version=<gameVersion>' to resolve the issue!`)
                 return null
             }
+            versionData = versions[0]
         }
         return versionData
     }
