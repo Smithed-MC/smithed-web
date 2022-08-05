@@ -112,7 +112,7 @@ const BodyContainer = styled.div`
 `
 const galleryImages: GalleryImage[] = [
   {
-    url: 'https://static.planetminecraft.com/files/resource_media/screenshot/14336380-thumbnail.jpg',
+    url: 'https://static.planetminecraft.com/files/resource_media/screenshot/15523618-thumbnail.png',
     pack: 'creepermagnet_/tcc',
     name: 'The Creeper\'s Code by CreeperMagnet_'
   },
@@ -123,8 +123,18 @@ const galleryImages: GalleryImage[] = [
   },
   {
     url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/125/15241252-untitled_l.webp',
-    pack: 'nia_/manic',
-    name: 'Manic by Nia_'
+    pack: 'hinge/manic',
+    name: 'Manic by Hinge'
+  },
+  {
+    url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2022/305/15758927-render_l.webp',
+    pack: 'hinge/sanguine',
+    name: 'Sanguine by Hinge'
+  },
+  {
+    url: 'https://cdn.discordapp.com/attachments/449554944543031296/1004942572503957514/2022-07-19_04.53.48.png',
+    pack: 'jachro/epa',
+    name: 'Explorer\'s Advent by Jachro'
   },
   {
     url: 'https://github.com/Geegaz-Datapacks/GGDK-Data/blob/main/img/title_image.jpg?raw=true',
@@ -133,7 +143,7 @@ const galleryImages: GalleryImage[] = [
   },
   {
     url: 'https://static.planetminecraft.com/files/image/minecraft/data-pack/2021/863/14897790-ocean-additions-thumbnaillogo_l.webp',
-    pack: '',
+    pack: 'primalugly/ocean_additions',
     name: 'Ocean Additions by Primalugly'
   },
 
