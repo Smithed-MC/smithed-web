@@ -37,6 +37,8 @@ async function incrementDownloads(db: Database, packIds: string[]) {
     await updateDownloads(db, userHash, packIds.map(p => p.split('@')[0]))
 }
 
+const activeMerges = new Map<string, Response[]>()
+
 
 export default class PackDownloader {
     private datapacks: [string, Buffer][] = []
@@ -316,7 +318,15 @@ async function processRequest(req: Request, res: Response) {
 
     // Init the PackDownloader
     const pd = new PackDownloader(db, m => (console.log(m)), (m) => {
-        if(!res.writableEnded) res.status(400).send(m)
+        activeMerges.set(cacheFile, 
+            activeMerges.get(cacheFile)?.filter(res => {
+                if(!res.writableEnded) {
+                    res.status(400).send(m)
+                    return false
+                }
+                return true
+            }) ?? []
+        )
     }, version)
 
     // Generate hash based on request packs and mode
@@ -331,7 +341,11 @@ async function processRequest(req: Request, res: Response) {
         console.log(packIds)
         await incrementDownloads(db, packIds)
         res.download(cacheFilePath, getFileName(packs.length, mode), undefined)
-    } else {
+    } else if(activeMerges.has(cacheFile)) {
+        const subscriptions = activeMerges.get(cacheFile)
+        subscriptions?.push(res)
+    }
+    else {
         console.log('Creating new file!')
         mergeNewData(packs, mode, version, res, pd, cacheFile)
     }
@@ -347,10 +361,16 @@ function getFileName(packCount: number, mode: PackDownloadMode) {
 }
 
 async function mergeNewData(packs: PackQuery[], mode: PackDownloadMode, version: string|undefined, res: Response, pd: PackDownloader, cacheFile: string) {
+    activeMerges.set(cacheFile, [res])
     const completed = await pd.downloadAndMerge(packs, mode)
 
     // Check if a response was already sent by the downloader
-    if(res.writableEnded) return
+    if(activeMerges.get(cacheFile) === undefined || activeMerges.get(cacheFile)?.length === 0) {
+        activeMerges.delete(cacheFile)
+        return
+    }
+
+    
 
     if (mode === 'both') {
         await sendBoth(completed, res, cacheFile)
@@ -375,7 +395,14 @@ async function sendBoth(completed: PackDownloadResult, res: Response, cacheFile:
     // Save file to cache
     fs.writeFileSync(filePath, Buffer.from(await finalBlob.arrayBuffer()))
     fs.writeFileSync(filePath + '.json', JSON.stringify(completed.ids))
-    res.download(filePath, 'packs.zip', undefined)
+
+    // Send file
+    activeMerges.get(cacheFile)?.forEach(res => {
+        if(!res.writableEnded) {
+            res.download(filePath, 'packs.zip', undefined)
+        }
+    })
+    activeMerges.delete(cacheFile)
 }
 
 async function sendDatapack(completed: PackDownloadResult, res: Response, cacheFile: string) {
@@ -385,7 +412,13 @@ async function sendDatapack(completed: PackDownloadResult, res: Response, cacheF
     // Save file to cache
     fs.writeFileSync(filePath, Buffer.from(await completed.dp[1].arrayBuffer()))
     fs.writeFileSync(filePath + '.json', JSON.stringify(completed.ids))
-    res.download(filePath, 'datapacks.zip', undefined)
+
+    activeMerges.get(cacheFile)?.forEach(res => {
+        if(!res.writableEnded) {
+            res.download(filePath, 'datapacks.zip', undefined)
+        }
+    })
+    activeMerges.delete(cacheFile)
 }
 
 async function sendResourcepack(completed: PackDownloadResult, res: Response, cacheFile: string) {
@@ -395,7 +428,13 @@ async function sendResourcepack(completed: PackDownloadResult, res: Response, ca
     // Save file to cache;
     fs.writeFileSync(filePath, Buffer.from(await completed.rp[1].arrayBuffer()))
     fs.writeFileSync(filePath + '.json', JSON.stringify(completed.ids))
-    res.download(filePath, 'resourcepacks.zip', undefined)
+    
+    activeMerges.get(cacheFile)?.forEach(res => {
+        if(!res.writableEnded) {
+            res.download(filePath, 'resourcepacks.zip', undefined)
+        }
+    })
+    activeMerges.delete(cacheFile)
 }
 
 
