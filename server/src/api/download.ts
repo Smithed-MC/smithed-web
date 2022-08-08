@@ -187,7 +187,7 @@ export default class PackDownloader {
 
         let lastPercent = 0
         const blob = await r.zip.close(undefined, {
-            'onprogress': (p, total, entry) => {
+            'onprogress': (p: number, total: number, entry: any) => {
                 const percent = Math.ceil(p * 100 / total)
                 if (lastPercent < percent) {
                     console.log(percent)
@@ -246,7 +246,6 @@ export default class PackDownloader {
             // if (jar != null) {
             //     console.log(jar);
             const dpb = new WeldDatapackBuilder(this.gameVersion)
-
 
             this.onStatus('Starting to merge datapacks')
 
