@@ -133,6 +133,8 @@ export default class PackDownloader {
         // console.log(pack)
 
         const versionData = await this.getVersionData(pack, version)
+        if(this.packIds.includes(owner + ':' + id + '@' + versionData.name)) return;
+        
         this.packIds.push(owner + ':' + id + '@' + versionData.name)
         // console.log(versionData)
         if (versionData != null) {
@@ -155,7 +157,7 @@ export default class PackDownloader {
                 }
             }
 
-            if (versionData["dependencies"] != null && versionData["dependencies"].length > 0) {
+            if (versionData["dependencies"] != null && versionData["dependencies"].length > 0 && pack) {
                 for (var d of versionData["dependencies"]) {
                     // console.log(d)
                     const [owner, id] = d.id.split(':')
@@ -166,10 +168,9 @@ export default class PackDownloader {
         }
     }
 
-
+    _downloadedPacks: string[] = []
     private async startDownload(owner: string, id: string, version?: string) {
         const dbEntry = (await get(this.database, `packs/${owner}:${id}`)).val()
-
         this.onStatus(`Downloading pack:\n${owner}:${id}`)
 
         if (dbEntry != null) {
@@ -219,6 +220,7 @@ export default class PackDownloader {
 
         this.packIds = []
 
+        this._downloadedPacks = []
         for (let p of packs) {
 
             await this.startDownload(p.owner, p.id, p.version)
