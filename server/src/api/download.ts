@@ -186,15 +186,7 @@ export default class PackDownloader {
         console.log('done building')
 
         let lastPercent = 0
-        const blob = await r.zip.close(undefined, {
-            'onprogress': (p: number, total: number, entry: any) => {
-                const percent = Math.ceil(p * 100 / total)
-                if (lastPercent < percent) {
-                    console.log(percent)
-                    lastPercent = percent
-                }
-            }
-        })
+        const blob = await r.zip.export()
         console.log(blob)
         return blob
     }
