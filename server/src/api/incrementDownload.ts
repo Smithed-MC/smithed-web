@@ -1,5 +1,5 @@
 import { Request, Response } from "express-serve-static-core";
-import { Database, get, ref, set } from "firebase/database";
+import { Database } from "firebase-admin/database";
 import md5 from "md5";
 import hash from 'object-hash'
 import initialize from "../util/database.js";
@@ -8,10 +8,10 @@ export async function updateDownloads(db: Database, userHash: string, packs: str
 
     // Add user hash to each packs downloads
     for(let p of packs) {
-        const entry = await get(ref(db, `packs/${p}`))
+        const entry = await db.ref(`packs/${p}`).get()
         console.log(p)
         if(!entry.exists()) continue;
-        await set(ref(db, `packs/${p}/downloads/${new Date().toLocaleDateString().split('/').join('-')}/${userHash}`), userHash)
+        await db.ref(`packs/${p}/downloads/${new Date().toLocaleDateString().split('/').join('-')}/${userHash}`).set(userHash)
 
     }
 }

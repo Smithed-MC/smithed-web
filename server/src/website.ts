@@ -4,7 +4,6 @@ import { ParsedQs } from 'qs'
 import * as fs from "fs";
 import path from "path";
 import initialize from './util/database.js';
-import { get, ref } from 'firebase/database';
 
 
 
@@ -66,12 +65,12 @@ const packsMeta = async (req: Request) => {
     const database = await initialize()
     if(database === undefined) return defaultMeta(req)
 
-    const packEntry = await get(ref(database, `packs/${owner}:${id}`))
+    const packEntry = await database.ref(`packs/${owner}:${id}`).get()
 
     if (!packEntry.exists()) return { title: `${owner}:${id}`, description: "Unknown pack!", image: "" }
 
     const uid = packEntry.val()["owner"]
-    const userPacks = await get(ref(database, `users/${uid}/packs`))
+    const userPacks = await database.ref(`users/${uid}/packs`).get()
 
     if (!userPacks.exists()) return { title: `${owner}:${id}`, description: "Unknown pack!", image: "" }
 

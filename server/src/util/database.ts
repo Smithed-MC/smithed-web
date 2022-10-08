@@ -1,10 +1,13 @@
-import {initializeApp} from 'firebase/app'
-import {getAuth, initializeAuth, signInWithEmailAndPassword} from 'firebase/auth'
-import { Database, getDatabase } from 'firebase/database';
+import { cert, applicationDefault, initializeApp,  } from 'firebase-admin/app';
+import {getAuth} from 'firebase-admin/auth'
+import {getDatabase, Database} from 'firebase-admin/database'
+import * as fs from 'fs'
+
 const firebaseConfig = {
+    credential: cert(JSON.parse(fs.readFileSync(process.env.ADMIN_KEY ?? 'secret.json', {encoding: 'utf-8'}))),
+    databaseURL: "https://mc-smithed-default-rtdb.firebaseio.com",
     apiKey: "AIzaSyDX-vLCBhO8StKAxnpvQ2EW8lz3kzYn4Qk",
     authDomain: "mc-smithed.firebaseapp.com",
-    databaseURL: "https://mc-smithed-default-rtdb.firebaseio.com",
     projectId: "mc-smithed",
     storageBucket: "mc-smithed.appspot.com",
     messagingSenderId: "574184244682",
@@ -15,11 +18,9 @@ const firebaseConfig = {
 let db: Database|undefined = undefined
 export default async function initialize() {
     if(db !== undefined) return db
-    const app = initializeApp(firebaseConfig)
-    const auth = initializeAuth(app)
-    if(process.env.EMAIL === undefined || process.env.PASSWORD === undefined) return undefined;
-    await signInWithEmailAndPassword(auth, process.env.EMAIL, process.env.PASSWORD)
-    
-    db = getDatabase(app)
+    initializeApp(firebaseConfig)
+
+    getAuth()
+    db = getDatabase()
     return db;
 } 

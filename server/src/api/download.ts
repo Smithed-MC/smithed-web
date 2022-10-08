@@ -1,5 +1,5 @@
 import { Request, Response } from 'express-serve-static-core'
-import { ref, set as setDB, get as getDB, Database } from 'firebase/database'
+import { Database } from 'firebase-admin/database'
 import { PackBuilder } from 'slimeball/out/util'
 import DefaultResourcepackBuilder from 'slimeball/out/resourcepack.js'
 import { WeldDatapackBuilder } from 'smithed-weld/out/datapack.js'
@@ -14,7 +14,7 @@ import hash from 'object-hash'
 import { updateDownloads } from './incrementDownload.js'
 import semver from 'semver'
 async function get(database: Database, path: string) {
-    return await getDB(ref(database, path))
+    return await database.ref(path).get()
 }
 
 type PackDownloadMode = 'datapack' | 'resourcepack' | 'both'
