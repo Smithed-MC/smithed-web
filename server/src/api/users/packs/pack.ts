@@ -3,6 +3,7 @@ import { backendApp } from "../../../main.js";
 import { getDatabase } from 'firebase-admin/database'
 import { getAuth } from 'firebase-admin/auth'
 import validatePack from "../../../validators/pack.js";
+import { sanitizeDisplayName } from "../../../util/user.js";
 
 async function getPack(req: Request, res: Response) {
     const {user, pack} = req.params
@@ -138,7 +139,7 @@ async function deletePack(req: Request, res: Response) {
     await db.ref(`/users/${user}/packs`).set(packs)
 
     const rawDisplayName = (await db.ref(`/users/${user}/displayName`).get()).val()
-    const safeName = rawDisplayName.toLowerCase().replaceAll(' ', '-').replaceAll(/(\s+|\[|\]|{|}|\||\\|"|%|~|#|<|>|\?)/g, '')
+    const safeName = sanitizeDisplayName(rawDisplayName)
 
     const packEntry = await db.ref(`/packs/${safeName}:${removedPack.id}`).get()
     if(packEntry.exists()) {
@@ -155,3 +156,4 @@ async function deletePack(req: Request, res: Response) {
 backendApp.get('/users/:user/packs/:pack', getPack) 
 backendApp.put('/users/:user/packs/:pack', putPack) 
 backendApp.delete('/users/:user/packs/:pack', deletePack)
+

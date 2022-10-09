@@ -7,6 +7,7 @@ export function register() {
     initialize()
     import('./api/users/index.js')
     import('./api/packs.js')
+    import('./api/util/index.js')
     backendApp.get('/download', handleDownload)
     backendApp.get('/increment-download', handleIncDownload)
 
