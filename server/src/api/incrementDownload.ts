@@ -6,7 +6,7 @@ import initialize from "../util/database.js";
 import { cachedPacks, reCachePacks } from "./packs.js";
 
 export async function updateDownloads(db: Database, userHash: string, packs: string[]) {
-
+    console.log('Cache:',cachedPacks)
     // Add user hash to each packs downloads
     for(let p of packs) {
         const entry = await db.ref(`packs/${p}`).get()
@@ -14,7 +14,11 @@ export async function updateDownloads(db: Database, userHash: string, packs: str
         if(!entry.exists()) continue;
         const date = new Date().toLocaleDateString().split('/').join('-');
         await db.ref(`packs/${p}/downloads/${date}/${userHash}`).set(userHash)
-        cachedPacks[p].downloads[date] += 1
+        if(cachedPacks === undefined) reCachePacks()
+        else if (cachedPacks[p] !== undefined) {
+            if (cachedPacks[p].downloads[date] !== undefined) cachedPacks[p].downloads[date] += 1
+            else cachedPacks[p].downloads[date] = 1
+        }
     }
 }
 
