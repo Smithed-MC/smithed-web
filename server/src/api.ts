@@ -3,10 +3,9 @@ import {handle as handleIncDownload} from "./api/incrementDownload.js"
 import { backendApp, frontendApp } from "./main.js";
 import initialize from "./util/database.js";
 
-export function register() {
-    initialize()
+export async function register() {
     import('./api/users/index.js')
-    import('./api/packs.js')
+    ;(await import('./api/packs.js')).default()
     import('./api/util/index.js')
     backendApp.get('/download', handleDownload)
     backendApp.get('/increment-download', handleIncDownload)

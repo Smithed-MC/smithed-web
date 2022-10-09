@@ -15,7 +15,7 @@ export const frontendApp = express();
 export const backendApp = express();
 
 export async function start() {
-    initialize()
+    await initialize()
     registerWebsite()
     registerApi()
 

@@ -29,5 +29,8 @@ async function getPacks(req: Request, res: Response) {
     if(Object.keys(cachedPacks).length === 0) await reCachePacks()
     res.status(200).send(cachedPacks);
 }
+console.log(backendApp)
 
-backendApp.get('/packs', getPacks)
+export default function register() {
+    backendApp.get('/packs', getPacks)
+}
