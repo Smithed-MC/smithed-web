@@ -3,6 +3,7 @@ import { Database } from "firebase-admin/database";
 import md5 from "md5";
 import hash from 'object-hash'
 import initialize from "../util/database.js";
+import { cachedPacks, reCachePacks } from "./packs.js";
 
 export async function updateDownloads(db: Database, userHash: string, packs: string[]) {
 
@@ -11,14 +12,14 @@ export async function updateDownloads(db: Database, userHash: string, packs: str
         const entry = await db.ref(`packs/${p}`).get()
         console.log(p)
         if(!entry.exists()) continue;
-        await db.ref(`packs/${p}/downloads/${new Date().toLocaleDateString().split('/').join('-')}/${userHash}`).set(userHash)
-
+        const date = new Date().toLocaleDateString().split('/').join('-');
+        await db.ref(`packs/${p}/downloads/${date}/${userHash}`).set(userHash)
+        cachedPacks[p].downloads[date] += 1
     }
 }
 
 export async function handle(req: Request, res: Response) {
     console.log('Incrementing downloads')
-    const errorOut = (message: string) => {res.status(500).end(message)}
 
     const userHash = hash({
         ip: req.headers['x-forwarded-for'],
@@ -26,25 +27,20 @@ export async function handle(req: Request, res: Response) {
     })
 
     const db = await initialize()
-    if(db === undefined) return errorOut('Could not initialize database!')
+    if(db === undefined) return res.status(500).send('Could not initialize database!')
     
-    if(req.query.packs === undefined) return errorOut('No \'packs\' specified in query')
+    if(req.query.packs === undefined) return res.status(400).send('No \'packs\' specified in query')
     updateDownloads(db, userHash, req.query.packs as string[])
     try {
         var packs = JSON.parse(req.query.packs as string)
     }
     catch(e) {  
         const error = e as Error 
-        return errorOut(error.message)
+        return res.status(500).send(error.message)
     }
 
     // Grab our database
   
 
-    // Send a response back
-    try {
-        res.status(200).end(`Successfully updated packs: \n  - ${packs.join('\n  - ')}`)
-    } catch {
-        return errorOut('Failed to update packs')
-    }
+    return res.status(200).end(`Successfully updated packs: \n  - ${packs.join('\n  - ')}`)
 }

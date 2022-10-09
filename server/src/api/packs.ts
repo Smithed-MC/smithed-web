@@ -10,7 +10,7 @@ interface PackEntry {
     owner: string
 }
 
-let cachedPacks: {[key: string] :PackEntry} = {}
+export let cachedPacks: {[key: string] :PackEntry} = {}
 
 export async function reCachePacks() {
     console.log('recache')
