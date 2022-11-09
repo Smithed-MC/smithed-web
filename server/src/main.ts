@@ -27,9 +27,16 @@ export async function start() {
         for(let k in rateDb)
             delete rateDb[k]
     }, 5 * 1000 * 60)
+
+
     backendApp.use(async function (req: Request, res: Response, next: NextFunction) {
         // if(req.socket.localAddress !== undefined) return next()
-
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept'
+        );
+        
         let identifier = req.socket.remoteAddress ?? ''
         if(req.query.token !== undefined) {
             try {
