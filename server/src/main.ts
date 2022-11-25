@@ -45,6 +45,8 @@ export async function start() {
             } catch {}           
         }
 
+        if(req.path !== '/download') return next()
+
         const dbEntry = rateDb[identifier]
         const data = dbEntry ?? {count:0,expire:Date.now()}
 
