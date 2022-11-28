@@ -19,10 +19,15 @@ export async function reCachePacks() {
 
     for(let pack in cachedPacks) {
         console.log(pack)
-        for(let day in cachedPacks[pack].downloads)
-            cachedPacks[pack].downloads[day] = Object.keys(cachedPacks[pack].downloads[day]).length
+        cachedPacks[pack] = minimizeDownloads(cachedPacks[pack]);
     }
 
+}
+
+export function minimizeDownloads(pack: PackEntry) {
+    for (let day in pack.downloads)
+        pack.downloads[day] = Object.keys(pack.downloads[day]).length;
+    return pack
 }
 
 async function getPacks(req: Request, res: Response) {
