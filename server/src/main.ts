@@ -8,8 +8,9 @@ import redis from 'redis'
 
 import 'dot-env'
 import initialize from "./util/database.js";
+import bodyParser from "body-parser";
 const FRONT_PORT = process.env.FRONT_PORT || 8000;
-const BACK_PORT = process.env.BACK_PORT || 9000;
+export const BACK_PORT = process.env.BACK_PORT || 9000;
 
 export const frontendApp = express();
 export const backendApp = express();
@@ -21,7 +22,6 @@ export async function start() {
 
     frontendApp.use(express.static(path.resolve(process.cwd(), "../website/build")))
     backendApp.use(express.json())
-
     const rateDb: any = {}
     setInterval(() => {
         for(let k in rateDb)

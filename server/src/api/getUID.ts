@@ -1,10 +1,8 @@
-import { backendApp } from "../../main.js";
-import { Request, Response } from "express";
 import { getDatabase } from "firebase-admin/database";
-import { sanitizeDisplayName } from "../../util/user.js";
+import { Request, Response } from "express";
+import { sanitizeDisplayName } from "../util/user.js";
 
-
-async function getUID(req: Request, res: Response) {
+export async function getUID(req: Request, res: Response) {
     const {username} = req.query
     if(username === '' || typeof username !== 'string')
         return res.status(400).end('Username not added')
@@ -18,14 +16,3 @@ async function getUID(req: Request, res: Response) {
             return res.status(200).send(uid)
     return res.status(404).send('User with the displayName not found')
 }
-
-async function getSanitizedUsername(req: Request, res: Response) {
-    const {username} = req.query
-    if(username === '' || typeof username !== 'string')
-        return res.status(400).end('Username not added')
-
-    res.status(200).send(sanitizeDisplayName(username))
-}
-
-backendApp.get('/util/uid', getUID)
-backendApp.get('/util/sanitize', getSanitizedUsername)

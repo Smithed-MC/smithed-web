@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getDatabase } from "firebase-admin/database";
-import { minimizeDownloads } from "./packs.js";
+import { minimizeDownloads } from "./getPacks.js";
 
 export default async function getPack(req: Request, res: Response) {
     const { pack } = req.query

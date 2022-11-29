@@ -18,7 +18,6 @@ export async function reCachePacks() {
     cachedPacks = (await db.ref('/packs').get()).val()
 
     for(let pack in cachedPacks) {
-        console.log(pack)
         cachedPacks[pack] = minimizeDownloads(cachedPacks[pack]);
     }
 
@@ -30,12 +29,7 @@ export function minimizeDownloads(pack: PackEntry) {
     return pack
 }
 
-async function getPacks(req: Request, res: Response) {
+export async function getPacks(req: Request, res: Response) {
     if(Object.keys(cachedPacks).length === 0) await reCachePacks()
     res.status(200).send(cachedPacks);
-}
-console.log(backendApp)
-
-export default function register() {
-    backendApp.get('/packs', getPacks)
 }

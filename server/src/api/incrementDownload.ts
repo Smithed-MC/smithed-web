@@ -3,7 +3,7 @@ import { Database } from "firebase-admin/database";
 import md5 from "md5";
 import hash from 'object-hash'
 import initialize from "../util/database.js";
-import { cachedPacks, reCachePacks } from "./packs.js";
+import { cachedPacks, reCachePacks } from "./getPacks.js";
 
 export async function updateDownloads(db: Database, userHash: string, packs: string[]) {
     console.log('Cache:',cachedPacks)
