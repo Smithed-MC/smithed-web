@@ -18,7 +18,6 @@ export const backendApp = express();
 export async function start() {
     await initialize()
     registerWebsite()
-    registerApi()
 
     frontendApp.use(express.static(path.resolve(process.cwd(), "../website/build")))
     backendApp.use(express.json())
@@ -61,6 +60,7 @@ export async function start() {
 
         return next()
     })
+    registerApi()
 
     frontendApp.listen(FRONT_PORT, () => {
         console.log(`Website frontend listening on ${FRONT_PORT}`)

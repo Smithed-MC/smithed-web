@@ -35,7 +35,7 @@ export async function register() {
         // if(!r.startsWith('get'))
         //     backendApp.put('/'+ r, bodyParser.json(), routes[r])
         // else
-        backendApp.all('/'+ r, bodyParser.json(), routes[r])
+        backendApp.all('/'+ r, routes[r])
     }
 
     // Make sure to wipe the cache every so often to save space on disk
