@@ -1,4 +1,5 @@
 import { getAuth } from "firebase-admin/auth";
+import { verifyToken } from "./customToken.js";
 import { fetchLocal } from "./fetchLocal.js";
 
 export function sanitizeDisplayName(rawDisplayName: any) {
@@ -11,7 +12,7 @@ export async function uidOrGetFromUsername(uid: string|undefined, username: stri
 
 export async function tokenMatchesUID(uid: string, token: string) {
     try {
-        var tokenUID = (await getAuth().verifyIdToken(token as string)).uid;
+        var tokenUID = (await verifyToken(token as string)) ?? '';
     } catch {
         var tokenUID = ''
     }

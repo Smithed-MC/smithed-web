@@ -39,8 +39,8 @@ export async function getUserPack(req: Request, res: Response) {
 
 export async function setUserPack(req: Request, res: Response) {
     const { uid, username, pack, token } = req.query
-    const { data } = req.body.body
-
+    const { data } = req.body
+    console.log(req.body)
 
     const responses = validateInputs([
         [{ type: 'string', name: 'uid', required: false }, uid],
@@ -53,13 +53,14 @@ export async function setUserPack(req: Request, res: Response) {
     if (responses.length > 0)
         return res.status(400).send(responses.join('\n'))
 
-    const validationResults = validatePack(data)
-    if (validationResults.length > 0)
-        return res.status(400).send(validationResults.map(e => e.toString()))
-
+        
     const user = await uidOrGetFromUsername(uid as string, username as string)
     if (!await tokenMatchesUID(user, token as string))
         return res.status(401).send('Unauthorized')
+
+    const validationResults = validatePack(data)
+    if (validationResults.length > 0)
+        return res.status(400).send(validationResults.map(e => e.toString()))
 
     const db = getDatabase()
 
@@ -150,7 +151,7 @@ export async function getUserPacks(req: Request, res: Response) {
 export async function addUserPack(req: Request, res: Response) {
     const { uid, username, token } = req.query
     console.log(req.body)
-    const { data } = req.body.body
+    const { data } = req.body
 
     const responses = validateInputs([
         [{ type: 'string', name: 'uid', required: false }, uid],

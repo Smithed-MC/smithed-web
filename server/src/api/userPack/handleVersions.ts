@@ -43,7 +43,7 @@ export async function getUserPackVersion(req: Request, res: Response) {
 
 export async function setUserPackVersion(req: Request, res: Response) {
     const { uid, username, pack, version, token } = req.query
-    const { data } = req.body.body
+    const { data } = req.body
     const responses = validateInputs([
         [{ type: 'string', name: 'uid', required: false }, uid],
         [{ type: 'string', name: 'username', required: false }, username],
@@ -165,7 +165,7 @@ export async function getUserPackVersions(req: Request, res: Response) {
 
 export async function addUserPackVersion(req: Request, res: Response) {
     const { uid, username, pack, token } = req.query
-    const { data } = req.body.body
+    const { data } = req.body
     const responses = validateInputs([
         [{ type: 'string', name: 'uid', required: false }, uid],
         [{ type: 'string', name: 'username', required: false }, username],

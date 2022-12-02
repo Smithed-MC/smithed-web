@@ -3,6 +3,7 @@ import fetch from 'node-fetch'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import generateTests from './tests.js'
+import { signInWithEmailAndPassword, getAuth, signInWithCustomToken } from 'firebase/auth'
 initializeApp({
     databaseURL: "https://mc-smithed-default-rtdb.firebaseio.com",
     apiKey: "AIzaSyDX-vLCBhO8StKAxnpvQ2EW8lz3kzYn4Qk",
@@ -21,7 +22,7 @@ async function request(name: string, uri: string, expectedStatus: number, body?:
     const mode = body === undefined ? 'GET' : 'PUT'
     console.log(chalk.yellow(mode), chalk.white(uri.split('?')[0]))
 
-    const response = await fetch(url, { method: mode, headers: { "Content-Type": "application/json" }, body: body !== undefined ? JSON.stringify({ body }) : undefined })
+    const response = await fetch(url, { method: mode, headers: { "Content-Type": "application/json" }, body: body !== undefined ? JSON.stringify(body) : undefined })
 
     const text = await response.text();
     console.log(chalk.blue(`[${response.status}] ${chalk.white(text.length < 300 ? text : text.substring(0, 300) + '...')}\n\n`))
@@ -48,5 +49,20 @@ async function test() {
     console.log(`Results ${passed}/${tests.length}`)
 }
 
+async function testTokenGen() {
+    const cred = await signInWithEmailAndPassword(getAuth(), process.env.EMAIL ?? '', process.env.PASSWORD ?? '')
+    const token = await cred.user.getIdToken();
+    const genToken = (await (await fetch(`http://localhost:9000/getToken?token=${token}&expires=1s`)).text())
+
+    setTimeout(async () => {
+        const resp = await fetch('http://localhost:9000/setUserPack?username=thenuclearnexus&pack=coc&token=' + genToken, {
+            method: 'PUT', headers: { "Content-Type": "application/json" }, body: JSON.stringify({data:{id: "coc"}})
+        })
+        console.log(resp.status, await resp.text())
+    }, 6000)
+}
+
+
 dotenv.config()
 test()
+// testTokenGen()

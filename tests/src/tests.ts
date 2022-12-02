@@ -1,5 +1,5 @@
 import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
-
+import fetch from "node-fetch";
 const validPackData = {
     data: {
         id: 'test',
@@ -36,8 +36,11 @@ const validVersionData = {
 
 async function generateTests() {
     const cred = await signInWithEmailAndPassword(getAuth(), process.env.EMAIL ?? '', process.env.PASSWORD ?? '')
-    const token = await cred.user.getIdToken()
+    const token = await cred.user.getIdToken();
     const uid = cred.user.uid;
+
+    const PAT = await (await fetch(`http://localhost:9000/getToken?token=${token}&expires=1h`)).text()
+    // console.log(PAT)
 
     return [
         {
@@ -95,6 +98,13 @@ async function generateTests() {
         {
             title: 'Set data of pack, w/ token',
             uri: `/setUserPack?uid=${uid}&pack=test&token=${token}`,
+            method: 'PUT',
+            body: validPackData,
+
+        },
+        {
+            title: 'Set data of pack, w/ PAT',
+            uri: `/setUserPack?uid=${uid}&pack=test&token=${PAT}`,
             method: 'PUT',
             body: validPackData,
 
@@ -184,6 +194,21 @@ async function generateTests() {
             uri: `/deleteUserPack?uid=${uid}&pack=test&token=${token}`,
             expectedStatus: 200,
         },
+        {
+            title: 'Generate tokenm, no token',
+            uri: `/getToken`,
+            expectedStatus: 400
+        },
+        {
+            title: 'Generate token, w/ invalid token',
+            uri: `/getToken?token=foo`,
+            expectedStatus: 401
+        },
+        {
+            title: 'Generate token, w/ token',
+            uri: `/getToken?token=${token}`,
+            expectedStatus: 200
+        }
     ]
 }
 

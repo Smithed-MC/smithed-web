@@ -9,6 +9,7 @@ import redis from 'redis'
 import 'dot-env'
 import initialize from "./util/database.js";
 import bodyParser from "body-parser";
+import { verifyToken } from "./util/customToken.js";
 const FRONT_PORT = process.env.FRONT_PORT || 8000;
 export const BACK_PORT = process.env.BACK_PORT || 9000;
 
@@ -39,8 +40,8 @@ export async function start() {
         let identifier = req.socket.remoteAddress ?? ''
         if(req.query.token !== undefined) {
             try {
-                const user = await getAuth().verifyIdToken(req.query.token as string)
-                identifier = user.uid
+                const uid = await verifyToken(req.query.token as string)
+                identifier = uid ?? ''
             } catch {}           
         }
 

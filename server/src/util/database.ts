@@ -3,8 +3,9 @@ import {getAuth} from 'firebase-admin/auth'
 import {getDatabase, Database} from 'firebase-admin/database'
 import * as fs from 'fs'
 
+export const serviceAccount = JSON.parse(fs.readFileSync(process.env.ADMIN_KEY ?? 'secret.json', {encoding: 'utf-8'}))
 const firebaseConfig = {
-    credential: cert(JSON.parse(fs.readFileSync(process.env.ADMIN_KEY ?? 'secret.json', {encoding: 'utf-8'}))),
+    credential: cert(serviceAccount),
     databaseURL: "https://mc-smithed-default-rtdb.firebaseio.com",
     apiKey: "AIzaSyDX-vLCBhO8StKAxnpvQ2EW8lz3kzYn4Qk",
     authDomain: "mc-smithed.firebaseapp.com",

@@ -22,7 +22,7 @@ export function validateInputs(inputs: [InputOptions, any][]) {
         }   
         if(typeof i[1] !== type) 
             issues.push(`Field '${name}' was expected to be '${type}', received '${typeof i[1]}'`)
-        else if(type === 'string' && i[1].includes('/'))
+        else if(type === 'string' && name !== 'token' && i[1].includes('/'))
             issues.push(`Field '${name}' cannot contain the '/' character`)
     }
     return issues
