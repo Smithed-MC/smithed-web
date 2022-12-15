@@ -36,7 +36,6 @@ export async function correctGithubLink(url: string): Promise<string> {
     if(method === 'blob')
         return fixBlob(matches, user??'', repo??'')
     if(method === 'releases')
-        url = await fixRelease(matches, user??'', repo??'')
-    console.log(url)
+        return await fixRelease(matches, user??'', repo??'') ?? url
     return url
 }
