@@ -14,6 +14,7 @@ import hash from 'object-hash'
 import { updateDownloads } from './incrementDownload.js'
 import semver from 'semver'
 import { response } from 'express'
+import { correctGithubLink } from '../util/url.js'
 async function get(database: Database, path: string) {
     return await database.ref(path).get()
 }
@@ -111,50 +112,13 @@ export default class PackDownloader {
         return versionData
     }
 
-    fixBlob(matches: RegExpExecArray, user: string, repo: string) {
-        const path = matches.shift()
-
-        return `https://raw.githubusercontent.com/${user}/${repo}/${path}`
-    }
-
-    async fixRelease(matches: RegExpExecArray, user: string, repo: string) {
-        const remainder = matches.shift();
-        if(remainder === undefined) return undefined
-        const [tag, assetName] = remainder.split('/').slice(1, 2);
-
-        const APIResp = await fetch(`https://api.github.com/repos/${user}/${repo}/releases`)
-        const APIData = await APIResp.json() as any[];
-        const release = APIData.find(r => r.tag_name === tag);
-        if(release === undefined) return undefined
-        const asset = release.assets.find((a: any) => a.name === assetName)
-        if(asset === undefined) return undefined
-
-        return asset.url;
-    }
-
-    async correctGithubRelease(url: string): Promise<string> {
-        const matches = /(https:\/\/)?(www\.)?github\.com\/(\S[^\/]+)\/(\S[^\/]+)\/(\S[^\/]+)\/(\S[^?\s]+)/g.exec(url)
-        console.log(matches)
-        if(matches == null || matches.length === 0)
-            return url
-        
-        matches.splice(0, 3)
-        const user = matches.shift()
-        const repo = matches.shift()
-        const method = matches.shift()
-        if(method === 'blob')
-            return this.fixBlob(matches, user??'', repo??'')
-        if(method === 'releases')
-            return await this.fixRelease(matches, user??'', repo??'') ?? url
-        return url
-
-    }
+   
 
     private async fetchFile(url: string): Promise<Buffer | null> {
         try {
 
-            url = await this.correctGithubRelease(url)
-
+            url = await correctGithubLink(url)
+            
             const resp = await fetch(url)
             console.log(url)
             if (resp.ok) {
