@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 function fixBlob(matches: RegExpExecArray, user: string, repo: string) {
     const path = matches.shift()
 
@@ -7,19 +8,19 @@ function fixBlob(matches: RegExpExecArray, user: string, repo: string) {
 async function fixRelease(matches: RegExpExecArray, user: string, repo: string) {
     const remainder = matches.shift();
     if(remainder === undefined) return undefined
-    const [tag, assetName] = remainder.split('/').slice(1,2);
+    const [tag, assetName] = remainder.split('/').slice(1);
     console.log(tag,assetName)
-    
+
     const fetchURL = `https://api.github.com/repos/${user}/${repo}/releases`
     console.log(fetchURL)
     const APIResp = await fetch(fetchURL)
     const APIData = await APIResp.json() as any[];
-    const release = APIData.find(r => r.tag_name === tag);
+    const release = APIData.find((r:any) => r.tag_name === tag);
     if(release === undefined) return undefined
     const asset = release.assets.find((a: any) => a.name === assetName)
     if(asset === undefined) return undefined
 
-    return asset.url;
+    return asset.browser_download_url;
 }
 
 export async function correctGithubLink(url: string): Promise<string> {
@@ -35,7 +36,7 @@ export async function correctGithubLink(url: string): Promise<string> {
     console.log(user,repo, method)
     if(method === 'blob')
         return fixBlob(matches, user??'', repo??'')
-    if(method === 'releases')
-        return await fixRelease(matches, user??'', repo??'') ?? url
+    // if(method === 'releases')
+    //     return await fixRelease(matches, user??'', repo??'') ?? url
     return url
 }
