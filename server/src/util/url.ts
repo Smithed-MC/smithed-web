@@ -7,9 +7,9 @@ function fixBlob(matches: RegExpExecArray, user: string, repo: string) {
 async function fixRelease(matches: RegExpExecArray, user: string, repo: string) {
     const remainder = matches.shift();
     if(remainder === undefined) return undefined
-    const [tag, assetName] = remainder.split('/').slice(1);
+    const [tag, assetName] = remainder.split('/').slice(1,2);
     console.log(tag,assetName)
-
+    
     const fetchURL = `https://api.github.com/repos/${user}/${repo}/releases`
     console.log(fetchURL)
     const APIResp = await fetch(fetchURL)
