@@ -9,14 +9,19 @@ export default async function validateDownload(req: Request, res: Response) {
     try {
         const resp = await fetch(url as string)
         if (!resp.ok)
-            return res.status(200).send(false)
+            return res.status(200).send(resp.status)
 
         const zip = await resp.blob()
 
-        const entries = await new ZipReader(new BlobReader(zip)).getEntries()
+        try {
+            const entries = await new ZipReader(new BlobReader(zip)).getEntries()
 
-        res.status(200).send(true)
+            res.status(200).send('valid')
+        } catch {
+            return res.status(200).send('Download was not a valid zip!')
+        }
+
     } catch {
-        res.status(200).send(false)
+        res.status(200).send('Error when fetching url!')
     }
 }
