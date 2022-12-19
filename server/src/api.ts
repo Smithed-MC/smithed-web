@@ -11,6 +11,7 @@ import * as jose from 'jose'
 import { serviceAccount } from "./util/database.js";
 import getToken from "./api/getToken.js";
 import validateDownload from "./api/validateDownload.js";
+import { getVersions } from "./api/getVersions.js";
 
 const routes: { [key: string]: any } = {
     getPack: getPack,
@@ -30,7 +31,8 @@ const routes: { [key: string]: any } = {
     setUserPackVersion: setUserPackVersion,
     deleteUserPackVersion: deleteUserPackVersion,
     getToken: getToken,
-    validateDownload: validateDownload
+    validateDownload: validateDownload,
+    getVersions: getVersions
 }
 
 
