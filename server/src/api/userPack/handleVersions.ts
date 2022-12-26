@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { backendApp } from "../../main.js";
 import { getDatabase } from 'firebase-admin/database'
 import { getAuth } from 'firebase-admin/auth'
-import validateVersion from "../../validators/version.js";
+import validateVersion, { Version } from "../../validators/version.js";
 import { validateInputs } from "../../util/inputValidator.js";
 import { tokenMatchesUID, uidOrGetFromUsername } from "../../util/user.js";
 
@@ -165,7 +165,7 @@ export async function getUserPackVersions(req: Request, res: Response) {
 
 export async function addUserPackVersion(req: Request, res: Response) {
     const { uid, username, pack, token } = req.query
-    const { data } = req.body
+    const { data }: {data: Version} = req.body
     const responses = validateInputs([
         [{ type: 'string', name: 'uid', required: false }, uid],
         [{ type: 'string', name: 'username', required: false }, username],
@@ -173,8 +173,16 @@ export async function addUserPackVersion(req: Request, res: Response) {
         [{ type: 'object', name: 'data', required: true }, data],
         [{ type: 'string', name: 'token', required: true }, token],
     ])
+
+
     if (responses.length > 0)
         return res.status(400).end(responses.join('\n'))
+
+
+    const validationResults = validateVersion(data)
+    if (validationResults.length > 0)
+        return res.status(400).send(validationResults.map(e => e.toString()))
+
 
     const user = await uidOrGetFromUsername(uid as string, username as string)
     if (!await tokenMatchesUID(user, token as string))

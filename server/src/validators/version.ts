@@ -5,7 +5,16 @@ const validSemver = (val: string) => semver.valid(val) != null
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
 
 type Dependency = {datapack?: string, resourcepack?: string}
-
+export type Version = {
+    name: string,
+    breaking: boolean,
+    supports: string[],
+    dependencies: Dependency[]
+    downloads: {
+        datapack: string,
+        resourcepack?: string
+    }
+}
 export const version = new Schema({
     name: {
         type: String,
