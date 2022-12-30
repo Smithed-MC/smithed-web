@@ -104,7 +104,7 @@ export default class PackDownloader {
                 this.onError(`Valid version could not be found for pack '${pack.id}' on Minecraft Version ${this.gameVersion}!\n'${pack.id}' supports: ${supports.join(', ')}\nTry adding '&version=<gameVersion>' to resolve the issue!`)
                 return null
             }
-            versions.sort((a,b) => semver.gt(a.name, b.name) ? 1 : -1).reverse()
+            versions.sort((a,b) => semver.gt(semver.coerce(a.name) ?? '', semver.coerce(b.name) ?? '') ? 1 : -1).reverse()
             
             console.log(versions)
             versionData = versions[0]
