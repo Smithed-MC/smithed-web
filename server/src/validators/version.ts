@@ -29,7 +29,7 @@ export const version = new Schema({
         required: true,
         length: {min: 1}
     },
-    dependenices: [{
+    dependencies: [{
         id: {
             type: String,
             required: true,

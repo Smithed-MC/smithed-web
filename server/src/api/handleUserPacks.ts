@@ -74,6 +74,7 @@ export async function setUserPack(req: Request, res: Response) {
     if (packIndex === -1)
         return res.status(404).send('Pack does not exist for the specified user')
 
+    console.log(data)
     await db.ref(`/users/${user}/packs/${packIndex}`).set(data)
 
     res.status(200).send('Successfully set the pack data')
