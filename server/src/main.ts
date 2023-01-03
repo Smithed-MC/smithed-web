@@ -36,9 +36,6 @@ export async function start() {
             'Access-Control-Allow-Headers',
             'Origin, X-Requested-With, Content-Type, Accept'
         );
-        
-        if(req.method === 'OPTIONS')
-            return res.status(200)
 
         let identifier = req.socket.remoteAddress ?? ''
         if(req.query.token !== undefined) {
