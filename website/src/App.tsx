@@ -189,9 +189,8 @@ function AppBody() {
       <br />
       <CategoryDiv>
         <h3 className='text-text'>Download</h3>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <DownloadButton onClick={downloadStable}>Stable</DownloadButton>
-          <DownloadButton onClick={downloadNightly} style={{ backgroundColor: '#C274FF' }}>Nightly</DownloadButton>
+        <div style={{ display: 'flex', gap: 8, maxWidth: 512, textAlign: 'center' }} className='bg-darkBackground p-4 rounded-lg'>
+          The launcher is currently being rewritten, beta testing can be found in the discord.
         </div>
         <label>Downloads: {downloads}</label>
       </CategoryDiv>
